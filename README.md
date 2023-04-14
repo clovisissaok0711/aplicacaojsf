@@ -20,12 +20,12 @@ CONFIGURANDO SERVIDOR:<br />
 -> SELECIONE A SUA VERSÃO DO APACHE TOMCAT, RECOMENDO A 9<br />
 
 CONFIGURANDO O BANCO DE DADOS:<br />
--> USUÁRIO E SENHA UTILIZADO NO PROJETO: username: postgres e senha: admin -> Pode ser alterada no arquivo /WEB-CONTENT/META-INF/context.xml -> username & password
--> NOME DO BANCO DE DADOS -> aplicacaojsf -> Pode ser alterada no arquivo /WEB-CONTENT/META-INF/context.xml -> url
--> APÓS ISSO SELECIONE O CONTEUDO DO ARQUIVO banco.backup E DENTRO DO SEU BANCO RODE TODO ESSE BACKUP COM INSTRUÇÕES SQL, FARÁ O INSERT DE ALGUNS DADOS PARA EXEMPLIFICAR O SISTEMA
+-> USUÁRIO E SENHA UTILIZADO NO PROJETO: username: postgres e senha: admin -> Pode ser alterada no arquivo /WEB-CONTENT/META-INF/context.xml -> username & password<br />
+-> NOME DO BANCO DE DADOS -> aplicacaojsf -> Pode ser alterada no arquivo /WEB-CONTENT/META-INF/context.xml -> url<br />
+-> APÓS ISSO SELECIONE O CONTEUDO DO ARQUIVO banco.backup E DENTRO DO SEU BANCO RODE TODO ESSE BACKUP COM INSTRUÇÕES SQL, FARÁ O INSERT DE ALGUNS DADOS PARA EXEMPLIFICAR O SISTEMA<br />
 
--> APÓS TUDO ISSO APENAS BASTA IR NO SERVIDOR -> ADD AND REMOVE... -> FAZER A IMPORTAÇÃO DO PROJETO aplicacaojsf
--> ASSIM QUE O SERVIDOR FIZER O DEPLOY DA APLICAÇÃO, BASTA DIGITAR http://localhost:porta_do_seu_servidor_aqui/aplicacaojsf
--> E AS CREDENCIAIS PADRÃO É usuário -> admin e senha -> admin
+-> APÓS TUDO ISSO APENAS BASTA IR NO SERVIDOR -> ADD AND REMOVE... -> FAZER A IMPORTAÇÃO DO PROJETO aplicacaojsf<br />
+-> ASSIM QUE O SERVIDOR FIZER O DEPLOY DA APLICAÇÃO, BASTA DIGITAR http://localhost:porta_do_seu_servidor_aqui/aplicacaojsf<br />
+-> E AS CREDENCIAIS PADRÃO É usuário -> admin e senha -> admin<br />
 
 :D
