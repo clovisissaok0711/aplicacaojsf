@@ -1,0 +1,3073 @@
+--
+-- PostgreSQL database dump
+--
+
+SET statement_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+
+CREATE ROLE admin CREATEROLE
+
+--
+-- TOC entry 219 (class 3079 OID 11727)
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- TOC entry 2265 (class 0 OID 0)
+-- Dependencies: 219
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+SET search_path = public, pg_catalog;
+
+--
+-- TOC entry 232 (class 1255 OID 128082)
+-- Name: retira_acentos(text); Type: FUNCTION; Schema: public; Owner: admin
+--
+
+CREATE FUNCTION retira_acentos(text) RETURNS text
+    LANGUAGE sql IMMUTABLE STRICT
+    AS $_$ 
+select 
+translate($1,'áàâãäéèêëíìïóòôõöúùûüÁÀÂÃÄÉÈÊËÍÌÏÓÒÔÕÖÚÙÛÜçÇ', 
+'aaaaaeeeeiiiooooouuuuAAAAAEEEEIIIOOOOOUUUUcC'); 
+$_$;
+
+
+ALTER FUNCTION public.retira_acentos(text) OWNER TO admin;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- TOC entry 168 (class 1259 OID 128083)
+-- Name: arquivoversao; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE arquivoversao (
+    arquivosql character varying(100) NOT NULL,
+    dataatualizacao date DEFAULT ('now'::text)::date NOT NULL,
+    hora time without time zone DEFAULT ('now'::text)::time without time zone NOT NULL
+);
+
+
+ALTER TABLE public.arquivoversao OWNER TO admin;
+
+--
+-- TOC entry 169 (class 1259 OID 128088)
+-- Name: bairro; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE bairro (
+    bai_codigo bigint NOT NULL,
+    bai_descricao character varying(100) NOT NULL,
+    versionnum integer NOT NULL
+);
+
+
+ALTER TABLE public.bairro OWNER TO admin;
+
+--
+-- TOC entry 170 (class 1259 OID 128091)
+-- Name: bairro_aud; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE bairro_aud (
+    bai_codigo bigint NOT NULL,
+    rev integer NOT NULL,
+    revtype smallint,
+    bai_descricao character varying(100)
+);
+
+
+ALTER TABLE public.bairro_aud OWNER TO admin;
+
+--
+-- TOC entry 171 (class 1259 OID 128094)
+-- Name: bairro_seq; Type: SEQUENCE; Schema: public; Owner: admin
+--
+
+CREATE SEQUENCE bairro_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.bairro_seq OWNER TO admin;
+
+--
+-- TOC entry 172 (class 1259 OID 128096)
+-- Name: cidade; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE cidade (
+    cid_codigo bigint NOT NULL,
+    cid_descricao character varying(100) NOT NULL,
+    estado bigint NOT NULL,
+    versionnum integer NOT NULL
+);
+
+
+ALTER TABLE public.cidade OWNER TO admin;
+
+--
+-- TOC entry 173 (class 1259 OID 128099)
+-- Name: cidade_aud; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE cidade_aud (
+    cid_codigo bigint NOT NULL,
+    rev integer NOT NULL,
+    revtype smallint,
+    cid_descricao character varying(100),
+    estado bigint
+);
+
+
+ALTER TABLE public.cidade_aud OWNER TO admin;
+
+--
+-- TOC entry 174 (class 1259 OID 128102)
+-- Name: cidade_seq; Type: SEQUENCE; Schema: public; Owner: admin
+--
+
+CREATE SEQUENCE cidade_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.cidade_seq OWNER TO admin;
+
+--
+-- TOC entry 175 (class 1259 OID 128104)
+-- Name: comissao_funcionario_filial; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE comissao_funcionario_filial (
+    com_codigo bigint NOT NULL,
+    com_descricao character varying(100),
+    ent_codigo bigint NOT NULL,
+    fil_codigo bigint NOT NULL,
+    versionnum integer NOT NULL
+);
+
+
+ALTER TABLE public.comissao_funcionario_filial OWNER TO admin;
+
+--
+-- TOC entry 176 (class 1259 OID 128107)
+-- Name: comissao_funcionario_filial_aud; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE comissao_funcionario_filial_aud (
+    com_codigo bigint NOT NULL,
+    rev integer NOT NULL,
+    revtype smallint,
+    com_descricao character varying(100),
+    ent_codigo bigint,
+    fil_codigo bigint
+);
+
+
+ALTER TABLE public.comissao_funcionario_filial_aud OWNER TO admin;
+
+--
+-- TOC entry 177 (class 1259 OID 128110)
+-- Name: comissao_funcionario_filial_seq; Type: SEQUENCE; Schema: public; Owner: admin
+--
+
+CREATE SEQUENCE comissao_funcionario_filial_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.comissao_funcionario_filial_seq OWNER TO admin;
+
+--
+-- TOC entry 178 (class 1259 OID 128112)
+-- Name: empreendimento; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE empreendimento (
+    emp_id bigint NOT NULL,
+    emp_descricao character varying(100) NOT NULL,
+    ent_codigo bigint NOT NULL,
+    versionnum integer NOT NULL
+);
+
+
+ALTER TABLE public.empreendimento OWNER TO admin;
+
+--
+-- TOC entry 179 (class 1259 OID 128115)
+-- Name: empreendimento_aud; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE empreendimento_aud (
+    emp_id bigint NOT NULL,
+    rev integer NOT NULL,
+    revtype smallint,
+    emp_descricao character varying(100),
+    ent_codigo bigint
+);
+
+
+ALTER TABLE public.empreendimento_aud OWNER TO admin;
+
+--
+-- TOC entry 180 (class 1259 OID 128118)
+-- Name: empreendimento_seq; Type: SEQUENCE; Schema: public; Owner: admin
+--
+
+CREATE SEQUENCE empreendimento_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.empreendimento_seq OWNER TO admin;
+
+--
+-- TOC entry 181 (class 1259 OID 128120)
+-- Name: entidade; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE entidade (
+    ent_codigo bigint NOT NULL,
+    ent_celular character varying(15),
+    ent_cep character varying(9),
+    ent_complemento character varying(50),
+    ent_contato character varying(80),
+    ent_datacadastro timestamp without time zone NOT NULL,
+    ent_datanascimento date,
+    ent_email character varying(100),
+    ent_emailcontato character varying(100),
+    ent_emailmovimento character varying(100),
+    ent_endereco character varying(100),
+    ent_fax character varying(15),
+    ent_fone character varying(15),
+    ent_inativo boolean NOT NULL,
+    ent_login character varying(20),
+    ent_mudarsenha boolean,
+    ent_nomefantasia character varying(100),
+    ent_observacao character varying(250),
+    ent_razao character varying(100),
+    ent_senha character varying(20),
+    ent_tipo character varying(255),
+    ent_tipopessoa character varying(255),
+    ent_ultimoacesso timestamp without time zone,
+    bai_codigo bigint,
+    cid_codigo bigint,
+    fil_codigo bigint,
+    versionnum integer NOT NULL
+);
+
+
+ALTER TABLE public.entidade OWNER TO admin;
+
+--
+-- TOC entry 182 (class 1259 OID 128126)
+-- Name: entidade_aud; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE entidade_aud (
+    ent_codigo bigint NOT NULL,
+    rev integer NOT NULL,
+    revtype smallint,
+    ent_celular character varying(15),
+    ent_cep character varying(9),
+    ent_complemento character varying(50),
+    ent_contato character varying(80),
+    ent_datacadastro timestamp without time zone,
+    ent_datanascimento date,
+    ent_email character varying(100),
+    ent_emailcontato character varying(100),
+    ent_emailmovimento character varying(100),
+    ent_endereco character varying(100),
+    ent_fax character varying(15),
+    ent_fone character varying(15),
+    ent_inativo boolean,
+    ent_login character varying(20),
+    ent_mudarsenha boolean,
+    ent_nomefantasia character varying(100),
+    ent_observacao character varying(250),
+    ent_razao character varying(100),
+    ent_senha character varying(20),
+    ent_tipo character varying(255),
+    ent_tipopessoa character varying(255),
+    ent_ultimoacesso timestamp without time zone,
+    bai_codigo bigint,
+    cid_codigo bigint,
+    fil_codigo bigint
+);
+
+
+ALTER TABLE public.entidade_aud OWNER TO admin;
+
+--
+-- TOC entry 183 (class 1259 OID 128132)
+-- Name: entidade_entidade; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE entidade_entidade (
+    ents_codigo bigint NOT NULL,
+    ent_codconstrutora bigint NOT NULL,
+    ent_codvendedor bigint NOT NULL,
+    versionnum integer NOT NULL
+);
+
+
+ALTER TABLE public.entidade_entidade OWNER TO admin;
+
+--
+-- TOC entry 184 (class 1259 OID 128135)
+-- Name: entidade_entidade_aud; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE entidade_entidade_aud (
+    ents_codigo bigint NOT NULL,
+    rev integer NOT NULL,
+    revtype smallint NOT NULL,
+    ent_codconstrutora bigint,
+    ent_codvendedor bigint
+);
+
+
+ALTER TABLE public.entidade_entidade_aud OWNER TO admin;
+
+--
+-- TOC entry 185 (class 1259 OID 128138)
+-- Name: entidade_entidade_seq; Type: SEQUENCE; Schema: public; Owner: admin
+--
+
+CREATE SEQUENCE entidade_entidade_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.entidade_entidade_seq OWNER TO admin;
+
+--
+-- TOC entry 186 (class 1259 OID 128140)
+-- Name: entidade_seq; Type: SEQUENCE; Schema: public; Owner: admin
+--
+
+CREATE SEQUENCE entidade_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.entidade_seq OWNER TO admin;
+
+--
+-- TOC entry 187 (class 1259 OID 128142)
+-- Name: entidadeacesso; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE entidadeacesso (
+    ent_codigo bigint NOT NULL,
+    esa_codigo character varying(70)
+);
+
+
+ALTER TABLE public.entidadeacesso OWNER TO admin;
+
+--
+-- TOC entry 188 (class 1259 OID 128145)
+-- Name: entidadeacesso_aud; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE entidadeacesso_aud (
+    rev integer NOT NULL,
+    ent_codigo bigint NOT NULL,
+    revtype smallint,
+    esa_codigo character varying(70)
+);
+
+
+ALTER TABLE public.entidadeacesso_aud OWNER TO admin;
+
+--
+-- TOC entry 189 (class 1259 OID 128148)
+-- Name: estado; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE estado (
+    est_id bigint NOT NULL,
+    est_nome character varying(100) NOT NULL,
+    est_uf character varying(10),
+    pais bigint,
+    versionnum integer NOT NULL
+);
+
+
+ALTER TABLE public.estado OWNER TO admin;
+
+--
+-- TOC entry 190 (class 1259 OID 128151)
+-- Name: estado_aud; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE estado_aud (
+    est_id bigint NOT NULL,
+    rev integer NOT NULL,
+    revtype smallint,
+    est_nome character varying(100),
+    est_uf character varying(10),
+    pais bigint
+);
+
+
+ALTER TABLE public.estado_aud OWNER TO admin;
+
+--
+-- TOC entry 191 (class 1259 OID 128154)
+-- Name: estado_seq; Type: SEQUENCE; Schema: public; Owner: admin
+--
+
+CREATE SEQUENCE estado_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.estado_seq OWNER TO admin;
+
+--
+-- TOC entry 192 (class 1259 OID 128156)
+-- Name: filial; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE filial (
+    fil_codigo bigint NOT NULL,
+    fil_autenticaremail character varying(255) NOT NULL,
+    fil_cep character varying(15),
+    fil_descricao character varying(100) NOT NULL,
+    fil_endereco character varying(100),
+    fil_enderecoemail character varying(100),
+    fil_fax character varying(20),
+    fil_fone character varying(20),
+    fil_portaemail integer,
+    fil_segurancaemail character varying(100),
+    fil_senhaemail character varying(100),
+    fil_statuscomissao character varying(50),
+    fil_usuarioemail character varying(100),
+    bai_codigo bigint,
+    cid_codigo bigint,
+    fil_servidoremail character varying(255),
+    versionnum integer NOT NULL,
+    fil_autenticacaoemail character varying(100)
+);
+
+
+ALTER TABLE public.filial OWNER TO admin;
+
+--
+-- TOC entry 193 (class 1259 OID 128162)
+-- Name: filial_aud; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE filial_aud (
+    fil_codigo bigint NOT NULL,
+    rev integer NOT NULL,
+    revtype smallint,
+    fil_autenticaremail character varying(255),
+    fil_cep character varying(15),
+    fil_descricao character varying(100),
+    fil_endereco character varying(100),
+    fil_enderecoemail character varying(100),
+    fil_fax character varying(20),
+    fil_fone character varying(20),
+    fil_portaemail integer,
+    fil_segurancaemail character varying(100),
+    fil_senhaemail character varying(100),
+    fil_statuscomissao character varying(50),
+    fil_usuarioemail character varying(100),
+    bai_codigo bigint,
+    cid_codigo bigint,
+    fil_servidoremail character varying(255),
+    fil_autenticacaoemail character varying(100)
+);
+
+
+ALTER TABLE public.filial_aud OWNER TO admin;
+
+--
+-- TOC entry 194 (class 1259 OID 128168)
+-- Name: filial_seq; Type: SEQUENCE; Schema: public; Owner: admin
+--
+
+CREATE SEQUENCE filial_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.filial_seq OWNER TO admin;
+
+--
+-- TOC entry 195 (class 1259 OID 128170)
+-- Name: hibernate_sequence; Type: SEQUENCE; Schema: public; Owner: admin
+--
+
+CREATE SEQUENCE hibernate_sequence
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.hibernate_sequence OWNER TO admin;
+
+--
+-- TOC entry 196 (class 1259 OID 128172)
+-- Name: mensagem; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE mensagem (
+    men_codigo bigint NOT NULL,
+    men_assunto character varying(80) NOT NULL,
+    men_datahora timestamp without time zone NOT NULL,
+    men_exigirresposta boolean,
+    men_lido boolean NOT NULL,
+    usr_destino bigint NOT NULL,
+    usr_origem bigint NOT NULL,
+    men_mensagem character varying(1000),
+    versionnum integer NOT NULL
+);
+
+
+ALTER TABLE public.mensagem OWNER TO admin;
+
+--
+-- TOC entry 197 (class 1259 OID 128178)
+-- Name: mensagem_aud; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE mensagem_aud (
+    men_codigo bigint NOT NULL,
+    rev integer NOT NULL,
+    revtype smallint,
+    men_assunto character varying(80),
+    men_datahora timestamp without time zone,
+    men_exigirresposta boolean,
+    men_lido boolean,
+    usr_destino bigint,
+    usr_origem bigint,
+    men_mensagem character varying(1000)
+);
+
+
+ALTER TABLE public.mensagem_aud OWNER TO admin;
+
+--
+-- TOC entry 198 (class 1259 OID 128184)
+-- Name: mensagem_seq; Type: SEQUENCE; Schema: public; Owner: admin
+--
+
+CREATE SEQUENCE mensagem_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.mensagem_seq OWNER TO admin;
+
+--
+-- TOC entry 199 (class 1259 OID 128186)
+-- Name: pais; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE pais (
+    pai_id bigint NOT NULL,
+    pai_nome character varying(80) NOT NULL,
+    pai_sigla character varying(15),
+    versionnum integer NOT NULL
+);
+
+
+ALTER TABLE public.pais OWNER TO admin;
+
+--
+-- TOC entry 200 (class 1259 OID 128189)
+-- Name: pais_aud; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE pais_aud (
+    pai_id bigint NOT NULL,
+    rev integer NOT NULL,
+    revtype smallint,
+    pai_nome character varying(80),
+    pai_sigla character varying(15)
+);
+
+
+ALTER TABLE public.pais_aud OWNER TO admin;
+
+--
+-- TOC entry 201 (class 1259 OID 128192)
+-- Name: pais_seq; Type: SEQUENCE; Schema: public; Owner: admin
+--
+
+CREATE SEQUENCE pais_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.pais_seq OWNER TO admin;
+
+--
+-- TOC entry 202 (class 1259 OID 128194)
+-- Name: produto; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE produto (
+    prd_codigo bigint NOT NULL,
+    prd_comissaodiferefiliial boolean,
+    prd_comissaodifereusuario boolean,
+    prd_comissaofilial numeric(15,4),
+    prd_comissaousuario numeric(15,4),
+    prd_descricao character varying(255) NOT NULL,
+    versionnum integer NOT NULL
+);
+
+
+ALTER TABLE public.produto OWNER TO admin;
+
+--
+-- TOC entry 203 (class 1259 OID 128197)
+-- Name: produto_aud; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE produto_aud (
+    prd_codigo bigint NOT NULL,
+    rev integer NOT NULL,
+    revtype smallint,
+    prd_comissaodiferefiliial boolean,
+    prd_comissaodifereusuario boolean,
+    prd_comissaofilial numeric(15,4),
+    prd_comissaousuario numeric(15,4),
+    prd_descricao character varying(255)
+);
+
+
+ALTER TABLE public.produto_aud OWNER TO admin;
+
+--
+-- TOC entry 204 (class 1259 OID 128200)
+-- Name: produto_seq; Type: SEQUENCE; Schema: public; Owner: admin
+--
+
+CREATE SEQUENCE produto_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.produto_seq OWNER TO admin;
+
+--
+-- TOC entry 205 (class 1259 OID 128202)
+-- Name: revinfo; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE revinfo (
+    id integer NOT NULL,
+    "timestamp" bigint NOT NULL,
+    entidade bigint NOT NULL
+);
+
+
+ALTER TABLE public.revinfo OWNER TO admin;
+
+--
+-- TOC entry 206 (class 1259 OID 128205)
+-- Name: sendemail; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE sendemail (
+    id_sendemail bigint NOT NULL,
+    email character varying(100) NOT NULL,
+    tratamento character varying(100) NOT NULL,
+    enviado boolean NOT NULL,
+    msgenviada character varying(1000000) NOT NULL,
+    versionnum integer NOT NULL
+);
+
+
+ALTER TABLE public.sendemail OWNER TO admin;
+
+--
+-- TOC entry 207 (class 1259 OID 128211)
+-- Name: sendemail_aud; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE sendemail_aud (
+    id_sendemail bigint NOT NULL,
+    rev integer NOT NULL,
+    revtype smallint,
+    email character varying(100) NOT NULL,
+    tratamento character varying(100) NOT NULL,
+    enviado boolean NOT NULL,
+    msgenviada character varying(1000000) NOT NULL,
+    versionnum integer NOT NULL
+);
+
+
+ALTER TABLE public.sendemail_aud OWNER TO admin;
+
+--
+-- TOC entry 208 (class 1259 OID 128217)
+-- Name: sendemail_seq; Type: SEQUENCE; Schema: public; Owner: admin
+--
+
+CREATE SEQUENCE sendemail_seq
+    START WITH 16
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.sendemail_seq OWNER TO admin;
+
+--
+-- TOC entry 209 (class 1259 OID 128219)
+-- Name: serie; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE serie (
+    ser_codigo bigint NOT NULL,
+    ser_descricao character varying(100) NOT NULL,
+    versionnum integer NOT NULL
+);
+
+
+ALTER TABLE public.serie OWNER TO admin;
+
+--
+-- TOC entry 210 (class 1259 OID 128222)
+-- Name: serie_aud; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE serie_aud (
+    ser_codigo bigint NOT NULL,
+    rev integer NOT NULL,
+    revtype smallint,
+    ser_descricao character varying(100)
+);
+
+
+ALTER TABLE public.serie_aud OWNER TO admin;
+
+--
+-- TOC entry 211 (class 1259 OID 128225)
+-- Name: serie_seq; Type: SEQUENCE; Schema: public; Owner: admin
+--
+
+CREATE SEQUENCE serie_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.serie_seq OWNER TO admin;
+
+--
+-- TOC entry 212 (class 1259 OID 128227)
+-- Name: titulo; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE titulo (
+    tit_codigo bigint NOT NULL,
+    tit_acrescimobaixa numeric(15,4),
+    tit_databaixa date,
+    tit_datahora timestamp without time zone,
+    tit_datavencimento date,
+    tit_descontobaixa numeric(15,4),
+    tit_documento character varying(18),
+    tit_observacao text,
+    tit_origem character varying(255),
+    tit_tipo character varying(255),
+    tit_valor numeric(15,4),
+    tit_valorbaixa numeric(15,4),
+    ent_codigo bigint NOT NULL,
+    ent_codigoabertura bigint NOT NULL,
+    tit_baixado boolean,
+    ent_codigobaixa bigint,
+    versionnum integer NOT NULL
+);
+
+
+ALTER TABLE public.titulo OWNER TO admin;
+
+--
+-- TOC entry 213 (class 1259 OID 128233)
+-- Name: titulo_aud; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE titulo_aud (
+    tit_codigo bigint NOT NULL,
+    rev integer NOT NULL,
+    revtype smallint,
+    tit_acrescimobaixa numeric(15,4),
+    tit_databaixa date,
+    tit_datahora timestamp without time zone,
+    tit_datavencimento date,
+    tit_descontobaixa numeric(15,4),
+    tit_documento character varying(18),
+    tit_observacao text,
+    tit_origem character varying(255),
+    tit_tipo character varying(255),
+    tit_valor numeric(15,4),
+    tit_valorbaixa numeric(15,4),
+    ent_codigo bigint,
+    ent_codigoabertura bigint,
+    ent_codigobaixa bigint,
+    tit_baixado boolean
+);
+
+
+ALTER TABLE public.titulo_aud OWNER TO admin;
+
+--
+-- TOC entry 214 (class 1259 OID 128239)
+-- Name: titulo_seq; Type: SEQUENCE; Schema: public; Owner: admin
+--
+
+CREATE SEQUENCE titulo_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.titulo_seq OWNER TO admin;
+
+--
+-- TOC entry 215 (class 1259 OID 128241)
+-- Name: valor_comissao_filial; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE valor_comissao_filial (
+    val_codigo bigint NOT NULL,
+    val_descricao character varying(100),
+    val_valor numeric(15,4) NOT NULL,
+    val_comissao bigint NOT NULL,
+    val_calculo character varying(255),
+    val_tipo character varying(255),
+    versionnum integer NOT NULL
+);
+
+
+ALTER TABLE public.valor_comissao_filial OWNER TO admin;
+
+--
+-- TOC entry 216 (class 1259 OID 128247)
+-- Name: valor_comissao_filial_aud; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE valor_comissao_filial_aud (
+    val_codigo bigint NOT NULL,
+    rev integer NOT NULL,
+    revtype smallint,
+    val_descricao character varying(100),
+    val_valor numeric(15,4),
+    val_comissao bigint,
+    val_calculo character varying(255),
+    val_tipo character varying(255)
+);
+
+
+ALTER TABLE public.valor_comissao_filial_aud OWNER TO admin;
+
+--
+-- TOC entry 217 (class 1259 OID 128253)
+-- Name: valor_comissao_filial_seq; Type: SEQUENCE; Schema: public; Owner: admin
+--
+
+CREATE SEQUENCE valor_comissao_filial_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.valor_comissao_filial_seq OWNER TO admin;
+
+--
+-- TOC entry 218 (class 1259 OID 128255)
+-- Name: version; Type: TABLE; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE TABLE version (
+    version_rank integer NOT NULL,
+    installed_rank integer NOT NULL,
+    version character varying(50) NOT NULL,
+    description character varying(200) NOT NULL,
+    type character varying(20) NOT NULL,
+    script character varying(1000) NOT NULL,
+    checksum integer,
+    installed_by character varying(100) NOT NULL,
+    installed_on timestamp without time zone DEFAULT now() NOT NULL,
+    execution_time integer NOT NULL,
+    success boolean NOT NULL
+);
+
+
+ALTER TABLE public.version OWNER TO admin;
+
+--
+-- TOC entry 2207 (class 0 OID 128083)
+-- Dependencies: 168
+-- Data for Name: arquivoversao; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+INSERT INTO arquivoversao (arquivosql, dataatualizacao, hora) VALUES ('v_1.sql', '2014-08-29', '19:44:12.040751');
+INSERT INTO arquivoversao (arquivosql, dataatualizacao, hora) VALUES ('v_2.sql', '2014-08-29', '19:44:12.22961');
+INSERT INTO arquivoversao (arquivosql, dataatualizacao, hora) VALUES ('v_3.sql', '2014-08-29', '19:44:12.251489');
+INSERT INTO arquivoversao (arquivosql, dataatualizacao, hora) VALUES ('v_4.sql', '2014-09-24', '23:48:55.106075');
+INSERT INTO arquivoversao (arquivosql, dataatualizacao, hora) VALUES ('v_5.sql', '2015-01-07', '11:48:19.278763');
+INSERT INTO arquivoversao (arquivosql, dataatualizacao, hora) VALUES ('v_6.sql', '2015-08-02', '13:40:16.721994');
+INSERT INTO arquivoversao (arquivosql, dataatualizacao, hora) VALUES ('v_7.sql', '2015-08-02', '13:40:16.721994');
+INSERT INTO arquivoversao (arquivosql, dataatualizacao, hora) VALUES ('v_8.sql', '2015-08-02', '13:40:16.721994');
+
+
+--
+-- TOC entry 2208 (class 0 OID 128088)
+-- Dependencies: 169
+-- Data for Name: bairro; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+INSERT INTO bairro (bai_codigo, bai_descricao, versionnum) VALUES (1, 'Zona 10', 1);
+INSERT INTO bairro (bai_codigo, bai_descricao, versionnum) VALUES (4, 'zona 56', 2);
+
+
+--
+-- TOC entry 2209 (class 0 OID 128091)
+-- Dependencies: 170
+-- Data for Name: bairro_aud; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (1, 34, 0, 'sdsdsd');
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (2, 35, 0, 'dsdsdsdsd');
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (3, 36, 0, 'dsdsds');
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (2, 37, 2, NULL);
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (1, 38, 1, 'sdsdsdsas');
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (4, 100, 0, 'sdsd');
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (5, 110, 0, 'dsds');
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (6, 244, 0, 'sdsds');
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (7, 245, 0, 'sdfsdf');
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (8, 246, 0, 'sdfdsf');
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (9, 247, 0, 'fsdfds');
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (10, 265, 0, 'sdsds');
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (10, 266, 2, NULL);
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (11, 267, 0, 'sdsdsd');
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (11, 387, 1, 'Zona 7');
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (13, 388, 0, 'Centro');
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (13, 394, 2, NULL);
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (14, 395, 0, 'gg');
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (15, 400, 0, 'sasas');
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (15, 401, 1, 'ssasasasasas');
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (15, 402, 2, NULL);
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (16, 408, 0, 'dssd');
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (16, 409, 1, 'sasasdssd');
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (16, 410, 1, 'sdsdsdssasasdssd');
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (16, 411, 2, NULL);
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (5, 473, 2, NULL);
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (3, 474, 2, NULL);
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (9, 475, 2, NULL);
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (14, 476, 2, NULL);
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (8, 477, 2, NULL);
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (7, 478, 2, NULL);
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (11, 479, 2, NULL);
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (6, 480, 2, NULL);
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (1, 523, 1, 'Zona 10');
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (4, 524, 1, 'zona 50');
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (17, 528, 0, 'Zona 60');
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (17, 529, 1, 'Zona 65');
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (17, 548, 2, NULL);
+INSERT INTO bairro_aud (bai_codigo, rev, revtype, bai_descricao) VALUES (4, 549, 1, 'zona 56');
+
+
+--
+-- TOC entry 2266 (class 0 OID 0)
+-- Dependencies: 171
+-- Name: bairro_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
+--
+
+SELECT pg_catalog.setval('bairro_seq', 17, true);
+
+
+--
+-- TOC entry 2211 (class 0 OID 128096)
+-- Dependencies: 172
+-- Data for Name: cidade; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+INSERT INTO cidade (cid_codigo, cid_descricao, estado, versionnum) VALUES (15, 'Maringá', 1, 0);
+INSERT INTO cidade (cid_codigo, cid_descricao, estado, versionnum) VALUES (13, 'Brasilia', 33, 1);
+INSERT INTO cidade (cid_codigo, cid_descricao, estado, versionnum) VALUES (12, 'Curitiba', 1, 3);
+
+
+--
+-- TOC entry 2212 (class 0 OID 128099)
+-- Dependencies: 173
+-- Data for Name: cidade_aud; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (2, 42, 0, '--iijjii', 1);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (2, 43, 2, NULL, NULL);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (1, 46, 2, NULL, NULL);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (3, 47, 0, 'sss', 1);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (4, 49, 0, 'dfdfdf', 1);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (5, 104, 0, 'sd', 5);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (5, 105, 1, 'sd', 1);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (6, 107, 0, 'sdsd', 1);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (7, 108, 0, 'dsdsd', 5);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (7, 109, 1, 'dsdsd', 1);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (8, 119, 0, 'dsdsdsdsd', 1);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (8, 120, 1, 'dsdsdsdsddsd', 1);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (9, 121, 0, 'ddsdsds', 5);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (10, 122, 0, 'dsdsdsdsd', 4);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (11, 123, 0, 'sdsdsds', 27);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (12, 124, 0, 'sdsdsd', 33);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (12, 125, 1, 'sdsdsd', 28);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (12, 126, 1, 'sdsdsdsssss', 28);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (13, 328, 0, 'aaaa', 27);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (14, 342, 0, 'sdsd', 27);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (15, 383, 0, 'Maringá', 1);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (5, 389, 1, 'Sarandi', 1);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (9, 390, 2, NULL, NULL);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (10, 391, 1, 'dsdsdsdsd', 47);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (12, 412, 1, 'sdsdsdsssssaasa', 28);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (19, 422, 0, 'sdsd', 83);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (20, 423, 0, 'sdsd', 83);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (21, 424, 0, 'sdsd', 83);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (22, 425, 0, 'sdsd', 83);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (23, 426, 0, 'sdsd', 83);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (24, 427, 0, 'sdsd', 83);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (25, 428, 0, 'sdsd', 83);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (26, 429, 0, 'sdsd', 83);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (27, 430, 0, 'sdsd', 83);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (28, 431, 0, 'sdsd', 83);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (29, 432, 0, 'sdsd', 83);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (30, 433, 0, 'sdsd', 83);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (31, 434, 0, 'sdsd', 83);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (32, 435, 0, 'sdsd', 83);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (33, 436, 0, 'sdsd', 83);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (34, 437, 0, 'sdsd', 83);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (7, 439, 2, NULL, NULL);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (28, 440, 1, 'sdsd sfdfdfdfd', 83);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (4, 464, 1, 'ddsdsdfdfdf', 1);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (4, 498, 2, NULL, NULL);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (10, 499, 2, NULL, NULL);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (8, 500, 2, NULL, NULL);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (5, 501, 2, NULL, NULL);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (23, 502, 2, NULL, NULL);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (24, 503, 2, NULL, NULL);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (25, 504, 2, NULL, NULL);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (14, 505, 2, NULL, NULL);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (33, 506, 2, NULL, NULL);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (6, 507, 2, NULL, NULL);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (32, 508, 2, NULL, NULL);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (30, 509, 2, NULL, NULL);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (29, 510, 2, NULL, NULL);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (27, 511, 2, NULL, NULL);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (26, 512, 2, NULL, NULL);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (22, 513, 2, NULL, NULL);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (21, 514, 2, NULL, NULL);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (34, 515, 2, NULL, NULL);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (31, 516, 2, NULL, NULL);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (19, 517, 2, NULL, NULL);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (20, 518, 2, NULL, NULL);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (3, 519, 2, NULL, NULL);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (28, 520, 2, NULL, NULL);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (11, 521, 2, NULL, NULL);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (13, 525, 1, 'Brasilia', 33);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (12, 526, 1, 'sdsdsdsssssaasa', 1);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (12, 527, 1, 'Curitiba', 1);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (35, 530, 0, 'teeste', 83);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (35, 531, 2, NULL, NULL);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (36, 532, 0, 'teste', 83);
+INSERT INTO cidade_aud (cid_codigo, rev, revtype, cid_descricao, estado) VALUES (36, 533, 2, NULL, NULL);
+
+
+--
+-- TOC entry 2267 (class 0 OID 0)
+-- Dependencies: 174
+-- Name: cidade_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
+--
+
+SELECT pg_catalog.setval('cidade_seq', 36, true);
+
+
+--
+-- TOC entry 2214 (class 0 OID 128104)
+-- Dependencies: 175
+-- Data for Name: comissao_funcionario_filial; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+INSERT INTO comissao_funcionario_filial (com_codigo, com_descricao, ent_codigo, fil_codigo, versionnum) VALUES (53, 'comissão', 2, 1, 1);
+
+
+--
+-- TOC entry 2215 (class 0 OID 128107)
+-- Dependencies: 176
+-- Data for Name: comissao_funcionario_filial_aud; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+INSERT INTO comissao_funcionario_filial_aud (com_codigo, rev, revtype, com_descricao, ent_codigo, fil_codigo) VALUES (53, 543, 0, 'comissão', 2, 1);
+INSERT INTO comissao_funcionario_filial_aud (com_codigo, rev, revtype, com_descricao, ent_codigo, fil_codigo) VALUES (54, 555, 0, 'comissão', 2, 1);
+INSERT INTO comissao_funcionario_filial_aud (com_codigo, rev, revtype, com_descricao, ent_codigo, fil_codigo) VALUES (54, 556, 2, NULL, NULL, NULL);
+
+
+--
+-- TOC entry 2268 (class 0 OID 0)
+-- Dependencies: 177
+-- Name: comissao_funcionario_filial_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
+--
+
+SELECT pg_catalog.setval('comissao_funcionario_filial_seq', 54, true);
+
+
+--
+-- TOC entry 2217 (class 0 OID 128112)
+-- Dependencies: 178
+-- Data for Name: empreendimento; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+INSERT INTO empreendimento (emp_id, emp_descricao, ent_codigo, versionnum) VALUES (2, 'empreendimento teste', 21, 0);
+
+
+--
+-- TOC entry 2218 (class 0 OID 128115)
+-- Dependencies: 179
+-- Data for Name: empreendimento_aud; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+INSERT INTO empreendimento_aud (emp_id, rev, revtype, emp_descricao, ent_codigo) VALUES (1, 404, 0, 'ssdsdsdsds', 5);
+INSERT INTO empreendimento_aud (emp_id, rev, revtype, emp_descricao, ent_codigo) VALUES (1, 483, 2, NULL, NULL);
+INSERT INTO empreendimento_aud (emp_id, rev, revtype, emp_descricao, ent_codigo) VALUES (2, 550, 0, 'empreendimento teste', 21);
+
+
+--
+-- TOC entry 2269 (class 0 OID 0)
+-- Dependencies: 180
+-- Name: empreendimento_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
+--
+
+SELECT pg_catalog.setval('empreendimento_seq', 2, true);
+
+
+--
+-- TOC entry 2220 (class 0 OID 128120)
+-- Dependencies: 181
+-- Data for Name: entidade; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+INSERT INTO entidade (ent_codigo, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo, versionnum) VALUES (2, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'junior', false, 'junior', NULL, NULL, 'eu', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2015-01-07 11:49:26.851456', NULL, NULL, NULL, 0);
+INSERT INTO entidade (ent_codigo, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo, versionnum) VALUES (21, NULL, '87455-656', '', '', '2016-05-15 14:36:06.703', NULL, '', '', '', 'Paraná ', '(65)6556-5656', '(65)6565-6565', false, NULL, NULL, 'Construtora de sistemas', '', 'Construtora de sistemas', NULL, 'TIPO_CADASTRO_CONSTRUTORA', 'TIPO_PESSOA_JURIDICA', NULL, 4, 12, 1, 1);
+INSERT INTO entidade (ent_codigo, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo, versionnum) VALUES (22, '', '', '', '', '2016-05-15 14:37:30.663', NULL, '', '', NULL, '', '', '', false, NULL, NULL, 'JSF', '', 'JSF', NULL, 'TIPO_CADASTRO_CLIENTE', 'TIPO_PESSOA_JURIDICA', NULL, 4, 15, 1, 0);
+INSERT INTO entidade (ent_codigo, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo, versionnum) VALUES (1, '', '', '', '', '2014-10-10 00:00:00', '2014-10-10', '', '', NULL, '', '', '', false, 'admin', false, 'alex', '', 'alex', 'admin', 'TIPO_CADASTRO_FUNCIONARIO', 'TIPO_PESSOA_FISICA', '2016-05-17 19:43:59.223425', NULL, NULL, NULL, 5);
+INSERT INTO entidade (ent_codigo, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo, versionnum) VALUES (111, '', '', '', '', '2014-10-10 00:00:00', '2014-10-10', '', '', NULL, '', '', '', false, 'teste', false, 'teste', '', 'teste', 'teste', 'TIPO_CADASTRO_FUNCIONARIO', 'TIPO_PESSOA_FISICA', '2016-05-17 19:43:59.223425', NULL, NULL, NULL, 5);
+
+
+--
+-- TOC entry 2221 (class 0 OID 128126)
+-- Dependencies: 182
+-- Data for Name: entidade_aud; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (3, 48, 0, '', '', '', '', '2014-09-10 22:00:41.68', NULL, '', '', '', '', '', '', false, 'sssssss', false, 'ddddddd', '', '', 'ssssssssssssssssssss', 'TIPO_CADASTRO_FUNCIONARIO', 'TIPO_PESSOA_FISICA', NULL, 1, 3, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (4, 111, 0, '', '', '', '', '2014-09-24 21:35:04.353', NULL, '', '', '', '', '', '', false, NULL, NULL, 'sdsdsd', '', '', NULL, 'TIPO_CADASTRO_FORNECEDOR', 'TIPO_PESSOA_FISICA', NULL, 1, 3, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (5, 118, 0, '', '', '', '', '2014-09-24 23:23:19.075', NULL, '', '', '', '', '', '', false, NULL, NULL, 'sdsdsdsd', '', '', NULL, 'TIPO_CADASTRO_CONSTRUTORA', 'TIPO_PESSOA_FISICA', NULL, 1, 5, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (6, 157, 0, '', '', '', '', '2014-09-25 19:39:34.501', NULL, '', '', '', '', '', '', false, NULL, NULL, 'dsdsdsd', '', '', NULL, 'TIPO_CADASTRO_CLIENTE', 'TIPO_PESSOA_FISICA', NULL, 1, 5, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (7, 158, 0, '', '', '', '', '2014-09-25 19:41:19.719', NULL, '', '', '', '', '', '', false, NULL, NULL, 'dsdsdsd', '', '', NULL, 'TIPO_CADASTRO_CLIENTE', 'TIPO_PESSOA_FISICA', NULL, 1, 5, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (8, 168, 0, '', '', '', '', '2014-09-28 22:15:44.98', NULL, '', '', NULL, '', '', '', false, '111', false, 'sdsds', '', '', '111', 'TIPO_CADASTRO_FUNCIONARIO', 'TIPO_PESSOA_FISICA', NULL, 1, 6, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (8, 169, 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (9, 329, 0, '', '', '', '', '2014-10-07 21:57:17.665', NULL, '', '', NULL, '', '', '', false, '111', false, 'sdsdsd', '', '', '111', 'TIPO_CADASTRO_FUNCIONARIO', 'TIPO_PESSOA_FISICA', NULL, 1, 13, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (10, 341, 0, '', '', '', '', '2014-10-09 00:07:07.799', NULL, '', '', NULL, '', '', '', false, '11', false, 'dsdsds', '', '', '11', 'TIPO_CADASTRO_FUNCIONARIO', 'TIPO_PESSOA_FISICA', NULL, 1, 8, 1);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (11, 343, 0, '', '', '', '', '2014-10-09 00:16:23.934', '2014-10-10', '', '', NULL, '', '', '', false, '444', false, 'dsssd', '', 'dsd', '444', 'TIPO_CADASTRO_FUNCIONARIO', 'TIPO_PESSOA_FISICA', NULL, 4, 8, 1);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 344, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 00:59:30.41473', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 345, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 01:04:24.305957', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 346, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 01:09:19.611898', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 347, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 01:13:31.666113', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 348, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 01:13:31.666113', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 349, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 01:13:31.666113', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 350, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 01:13:31.666113', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 351, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 01:26:02.177464', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 352, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 01:26:02.177464', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 353, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 01:26:02.177464', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 354, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 01:26:02.177464', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 355, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 01:26:02.177464', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 356, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 01:26:02.177464', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 357, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 01:26:02.177464', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 358, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 01:26:02.177464', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 359, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 01:40:56.91569', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 360, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 01:40:56.91569', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 361, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 01:40:56.91569', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 362, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 01:40:56.91569', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 363, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 01:40:56.91569', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 364, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 01:40:56.91569', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 365, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 01:40:56.91569', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 366, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 01:40:56.91569', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 367, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 01:40:56.91569', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 368, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 01:40:56.91569', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 369, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 01:40:56.91569', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 370, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 20:40:49.660903', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 371, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 20:43:43.374349', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 372, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 20:43:43.374349', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 373, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 20:43:43.374349', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 374, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 20:51:33.001748', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 375, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 20:51:33.001748', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 376, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 20:51:33.001748', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 377, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 20:51:33.001748', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 378, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 20:51:33.001748', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (10, 379, 1, '', '', '', '', '2014-10-09 00:07:07.799', NULL, '', '', NULL, '', '', '', false, '11', false, 'dsdsds', '', '', '11', 'TIPO_CADASTRO_FUNCIONARIO', 'TIPO_PESSOA_FISICA', NULL, 1, 8, 1);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 380, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 20:51:33.001748', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 381, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 20:51:33.001748', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 382, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-10-09 20:51:33.001748', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (2, 384, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'junior', false, 'junior', NULL, NULL, 'eu', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2014-11-17 19:40:32.217441', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (16, 386, 0, '', '', '', '', '2014-11-17 19:59:50.028', NULL, '', '', '', '', '', '', false, NULL, NULL, 'Criente', '', 'Razão do criente', NULL, 'TIPO_CADASTRO_CLIENTE', 'TIPO_PESSOA_FISICA', NULL, 1, 10, 4);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 396, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2015-01-23 16:25:11.741683', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 406, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2015-08-02 14:15:40.923444', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 414, 1, NULL, NULL, NULL, NULL, '2014-10-10 00:00:00', '2014-10-10', NULL, NULL, NULL, NULL, NULL, NULL, false, 'alex', false, 'alex', NULL, NULL, 'alex', 'TIPO_CADASTRO_FUNCIONARIO', NULL, '2015-10-01 21:11:07.3136', NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (5, 419, 1, '', '', '', '', '2014-09-24 23:23:19.075', NULL, '', '', '', '', '', '', false, NULL, NULL, 'sdsdsdsd', '', 'sdsdsdsdsdsdsdsd', NULL, 'TIPO_CADASTRO_CONSTRUTORA', 'TIPO_PESSOA_FISICA', NULL, 1, 5, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (5, 438, 1, '', '', '', '', '2014-09-24 23:23:19.075', NULL, '', '', '', '', '', '', false, NULL, NULL, 'sdsdsdsd', '', 'sdsdsdsdsdsdsdsd', NULL, 'TIPO_CADASTRO_CONSTRUTORA', 'TIPO_PESSOA_FISICA', NULL, 1, 13, 1);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (4, 484, 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (5, 489, 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (16, 490, 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (6, 491, 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (7, 492, 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (3, 493, 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (10, 494, 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (11, 495, 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 496, 1, '', '', '', '', '2014-10-10 00:00:00', '2014-10-10', '', '', NULL, '', '', '', false, 'admin', false, 'alex', '', 'alex', 'admin', 'TIPO_CADASTRO_FUNCIONARIO', 'TIPO_PESSOA_FISICA', '2016-05-15 14:16:02.620973', 4, 15, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (9, 522, 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (21, 537, 0, NULL, '87455-656', '', '', '2016-05-15 14:36:06.703', NULL, '', '', '', 'Paaná ', '(65)6556-5656', '(65)6565-6565', false, NULL, NULL, 'Construtora de sistemas', '', 'Construtora de sistemas', NULL, 'TIPO_CADASTRO_CONSTRUTORA', 'TIPO_PESSOA_JURIDICA', NULL, 4, 12, 1);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (21, 538, 1, NULL, '87455-656', '', '', '2016-05-15 14:36:06.703', NULL, '', '', '', 'Paraná ', '(65)6556-5656', '(65)6565-6565', false, NULL, NULL, 'Construtora de sistemas', '', 'Construtora de sistemas', NULL, 'TIPO_CADASTRO_CONSTRUTORA', 'TIPO_PESSOA_JURIDICA', NULL, 4, 12, 1);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (22, 539, 0, '', '', '', '', '2016-05-15 14:37:30.663', NULL, '', '', NULL, '', '', '', false, NULL, NULL, 'Aplicação JSF', '', 'Aplicação JSF', NULL, 'TIPO_CADASTRO_CLIENTE', 'TIPO_PESSOA_JURIDICA', NULL, 4, 15, 1);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 546, 1, '', '', '', '', '2014-10-10 00:00:00', '2014-10-10', '', '', NULL, '', '', '', false, 'admin', false, 'alex', '', 'alex', 'java', 'TIPO_CADASTRO_FUNCIONARIO', 'TIPO_PESSOA_FISICA', '2016-05-15 14:25:55.329956', 4, 15, NULL);
+INSERT INTO entidade_aud (ent_codigo, rev, revtype, ent_celular, ent_cep, ent_complemento, ent_contato, ent_datacadastro, ent_datanascimento, ent_email, ent_emailcontato, ent_emailmovimento, ent_endereco, ent_fax, ent_fone, ent_inativo, ent_login, ent_mudarsenha, ent_nomefantasia, ent_observacao, ent_razao, ent_senha, ent_tipo, ent_tipopessoa, ent_ultimoacesso, bai_codigo, cid_codigo, fil_codigo) VALUES (1, 558, 1, '', '', '', '', '2014-10-10 00:00:00', '2014-10-10', '', '', NULL, '', '', '', false, 'admin', false, 'alex', '', 'alex', 'java', 'TIPO_CADASTRO_FUNCIONARIO', 'TIPO_PESSOA_FISICA', '2016-05-15 14:58:01.639226', 4, 15, NULL);
+
+
+--
+-- TOC entry 2222 (class 0 OID 128132)
+-- Dependencies: 183
+-- Data for Name: entidade_entidade; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+
+
+--
+-- TOC entry 2223 (class 0 OID 128135)
+-- Dependencies: 184
+-- Data for Name: entidade_entidade_aud; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+
+
+--
+-- TOC entry 2270 (class 0 OID 0)
+-- Dependencies: 185
+-- Name: entidade_entidade_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
+--
+
+SELECT pg_catalog.setval('entidade_entidade_seq', 1, false);
+
+
+--
+-- TOC entry 2271 (class 0 OID 0)
+-- Dependencies: 186
+-- Name: entidade_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
+--
+
+SELECT pg_catalog.setval('entidade_seq', 22, true);
+
+
+--
+-- TOC entry 2226 (class 0 OID 128142)
+-- Dependencies: 187
+-- Data for Name: entidadeacesso; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+INSERT INTO entidadeacesso (ent_codigo, esa_codigo) VALUES (1, 'APPLET_FILE_LOCAL');
+INSERT INTO entidadeacesso (ent_codigo, esa_codigo) VALUES (1, 'PRODUTO_ACESSAR');
+INSERT INTO entidadeacesso (ent_codigo, esa_codigo) VALUES (1, 'BAIXA_NOVO');
+INSERT INTO entidadeacesso (ent_codigo, esa_codigo) VALUES (1, 'BAIXA_ACESSAR');
+INSERT INTO entidadeacesso (ent_codigo, esa_codigo) VALUES (1, 'BAIRRO_ACESSAR');
+INSERT INTO entidadeacesso (ent_codigo, esa_codigo) VALUES (1, 'VENDEDOR_NOVO');
+INSERT INTO entidadeacesso (ent_codigo, esa_codigo) VALUES (1, 'BAIXA_EDITAR');
+INSERT INTO entidadeacesso (ent_codigo, esa_codigo) VALUES (1, 'CONSTRUTORA_ACESSAR');
+INSERT INTO entidadeacesso (ent_codigo, esa_codigo) VALUES (1, 'BAIXA_EXCLUIR');
+INSERT INTO entidadeacesso (ent_codigo, esa_codigo) VALUES (1, 'TITULO_EXCLUIR');
+INSERT INTO entidadeacesso (ent_codigo, esa_codigo) VALUES (2, 'USER');
+INSERT INTO entidadeacesso (ent_codigo, esa_codigo) VALUES (1, 'ADMIN');
+INSERT INTO entidadeacesso (ent_codigo, esa_codigo) VALUES (1, 'USER');
+INSERT INTO entidadeacesso (ent_codigo, esa_codigo) VALUES (1, 'CIDADE_EDITAR');
+INSERT INTO entidadeacesso (ent_codigo, esa_codigo) VALUES (1, 'CIDADE_EXCLUIR');
+INSERT INTO entidadeacesso (ent_codigo, esa_codigo) VALUES (111, 'ADMIN');
+INSERT INTO entidadeacesso (ent_codigo, esa_codigo) VALUES (111, 'USER');
+
+
+--
+-- TOC entry 2227 (class 0 OID 128145)
+-- Dependencies: 188
+-- Data for Name: entidadeacesso_aud; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (329, 9, 0, 'USER');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (341, 10, 0, 'USER');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (343, 11, 0, 'USER');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (344, 1, 2, 'XX');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (345, 1, 2, 'ADMIN');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (346, 1, 2, 'USER');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (347, 1, 2, 'USER');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (348, 1, 2, 'USER');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (349, 1, 0, 'USER');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (350, 1, 2, 'USER');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (351, 1, 2, 'ADMIN');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (352, 1, 0, 'ADMIN');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (353, 1, 2, 'USER');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (354, 1, 0, 'USER');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (355, 1, 2, 'ADMIN');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (355, 1, 2, 'USER');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (356, 1, 0, 'ADMIN');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (356, 1, 0, 'USER');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (357, 1, 2, 'ADMIN');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (358, 1, 0, 'ADMIN');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (358, 1, 2, 'USER');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (359, 1, 2, 'USER');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (360, 1, 2, 'USER');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (361, 1, 0, 'USER');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (362, 1, 2, 'USER');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (363, 1, 0, 'USER');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (364, 1, 2, 'USER');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (365, 1, 0, 'USER');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (366, 1, 2, 'ADMIN');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (366, 1, 2, 'USER');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (367, 1, 0, 'ADMIN');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (406, 1, 2, 'CIDADE_SALVAR');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (406, 1, 2, 'CIDADE_CRIAR');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (414, 1, 0, 'APPLET_FILE_LOCAL');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (494, 10, 2, 'ADMIN');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (494, 10, 2, 'SALVAR_CIDADE');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (494, 10, 2, 'USER');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (522, 9, 2, 'USER');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (495, 11, 2, 'USER');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (558, 1, 0, 'BAIXA_EDITAR');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (558, 1, 0, 'CONSTRUTORA_ACESSAR');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (558, 1, 0, 'BAIXA_NOVO');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (558, 1, 0, 'PRODUTO_ACESSAR');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (558, 1, 0, 'BAIXA_EXCLUIR');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (558, 1, 0, 'BAIXA_ACESSAR');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (558, 1, 0, 'TITULO_EXCLUIR');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (558, 1, 0, 'VENDEDOR_NOVO');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (558, 1, 0, 'BAIRRO_ACESSAR');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (367, 1, 0, 'USER');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (368, 1, 2, 'ADMIN');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (369, 1, 0, 'ADMIN');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (370, 1, 2, 'ADMIN');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (371, 1, 2, 'USER');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (372, 1, 2, 'ADMIN');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (373, 1, 0, 'ADMIN');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (373, 1, 0, 'USER');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (374, 1, 0, 'SALVAR_CIDADE');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (375, 1, 2, 'SALVAR_CIDADE');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (376, 1, 2, 'USER');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (377, 1, 0, 'SALVAR_CIDADE');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (378, 1, 2, 'ADMIN');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (379, 10, 0, 'ADMIN');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (379, 10, 0, 'SALVAR_CIDADE');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (380, 1, 0, 'ADMIN');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (381, 1, 0, 'USER');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (382, 1, 2, 'USER');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (396, 1, 0, 'CIDADE_EDITAR');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (396, 1, 0, 'CIDADE_SALVAR');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (396, 1, 0, 'CIDADE_EXCLUIR');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (396, 1, 0, 'CIDADE_CRIAR');
+INSERT INTO entidadeacesso_aud (rev, ent_codigo, revtype, esa_codigo) VALUES (396, 1, 2, 'SALVAR_CIDADE');
+
+
+--
+-- TOC entry 2228 (class 0 OID 128148)
+-- Dependencies: 189
+-- Data for Name: estado; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (3, 'dsdsd', 'sdsd', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (4, 'sd', 'sdsd', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (5, 'dsds', 'dsd', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (6, 'sds', 'd', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (7, 'dsdsd', 'sdsds', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (8, 'sds', 'dsdsd', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (9, 'sds', 'dsdsd', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (15, 'sdsd', 'dsds', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (16, 'sdsd', 'dsds', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (17, 'sdsdsdsds', 'dsd', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (13, 'sdsdsdsdsdsdsds', 'dsddsdssds', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (11, 'sdsdsdsdsds', 'dsddsdssds', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (18, 'Teste', '1', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (20, 'Teste', '1', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (21, 'Teste', '1', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (22, 'Teste', '1', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (23, 'Teste', '1', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (24, 'Teste', '1', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (25, 'Teste', '1', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (26, 'Teste', '1', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (27, 'Acre', 'AC', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (28, 'Alagoas', 'AL', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (29, 'Amapá', 'AP', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (30, 'Amazonas', 'AM', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (31, 'Bahia', 'BA', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (32, 'Ceará', 'CE', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (33, 'Distrito Federal', 'DF', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (34, 'Espírito Santo', 'ES', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (35, 'Goiás', 'GO', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (36, 'Maranhão', 'MA', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (37, 'Mato Grosso', 'MT', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (38, 'Mato Grosso do Sul', 'MS', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (39, 'Minas Gerais', 'MG', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (40, 'Pará', 'PA', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (41, 'Paraíba', 'PB', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (42, 'Pernanbuco', 'PE', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (43, 'Piauí', 'PI', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (44, 'Rio de Janeiro', 'RJ', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (45, 'Rio Grande do Norte', 'RN', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (46, 'Rio Grande do Sul', 'RS', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (47, 'Rondônia', 'RO', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (48, 'Roraima', 'RR', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (49, 'Santa Catarina', 'SC', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (50, 'São Paulo', 'SP', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (51, 'Sergipe', 'SE', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (52, 'Tocantins', 'TO', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (1, 'Paraná', 'PR', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (56, 'Minas Gerais', 'MG', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (57, 'Minas Gerais', 'MG', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (58, 'Pará', 'PA', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (83, 'Acre', 'AC', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (84, 'Alagoas', 'AL', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (85, 'Amapá', 'AP', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (86, 'Amazonas', 'AM', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (87, 'Bahia', 'BA', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (88, 'Ceará', 'CE', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (89, 'Distrito Federal', 'DF', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (90, 'Espírito Santo', 'ES', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (91, 'Goiás', 'GO', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (92, 'Maranhão', 'MA', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (93, 'Mato Grosso', 'MT', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (94, 'Mato Grosso do Sul', 'MS', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (95, 'Paraíba', 'PB', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (96, 'Pernanbuco', 'PE', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (97, 'Piauí', 'PI', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (98, 'Rio de Janeiro', 'RJ', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (99, 'Rio Grande do Norte', 'RN', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (100, 'Rio Grande do Sul', 'RS', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (101, 'Rondônia', 'RO', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (102, 'Roraima', 'RR', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (103, 'Santa Catarina', 'SC', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (104, 'São Paulo', 'SP', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (105, 'Sergipe', 'SE', 1, 0);
+INSERT INTO estado (est_id, est_nome, est_uf, pais, versionnum) VALUES (106, 'Tocantins', 'TO', 1, 0);
+
+
+--
+-- TOC entry 2229 (class 0 OID 128151)
+-- Dependencies: 190
+-- Data for Name: estado_aud; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+INSERT INTO estado_aud (est_id, rev, revtype, est_nome, est_uf, pais) VALUES (2, 39, 0, 'rere', 'rere', 1);
+INSERT INTO estado_aud (est_id, rev, revtype, est_nome, est_uf, pais) VALUES (2, 40, 2, NULL, NULL, NULL);
+INSERT INTO estado_aud (est_id, rev, revtype, est_nome, est_uf, pais) VALUES (3, 50, 0, 'dsdsd', 'sdsd', 1);
+INSERT INTO estado_aud (est_id, rev, revtype, est_nome, est_uf, pais) VALUES (4, 51, 0, 'sd', 'sdsd', 1);
+INSERT INTO estado_aud (est_id, rev, revtype, est_nome, est_uf, pais) VALUES (5, 52, 0, 'dsds', 'dsd', 1);
+INSERT INTO estado_aud (est_id, rev, revtype, est_nome, est_uf, pais) VALUES (6, 53, 0, 'sds', 'd', 1);
+INSERT INTO estado_aud (est_id, rev, revtype, est_nome, est_uf, pais) VALUES (7, 54, 0, 'dsdsd', 'sdsds', 1);
+INSERT INTO estado_aud (est_id, rev, revtype, est_nome, est_uf, pais) VALUES (8, 55, 0, 'sds', 'dsdsd', 1);
+INSERT INTO estado_aud (est_id, rev, revtype, est_nome, est_uf, pais) VALUES (9, 56, 0, 'sds', 'dsdsd', 1);
+INSERT INTO estado_aud (est_id, rev, revtype, est_nome, est_uf, pais) VALUES (10, 57, 0, 'd', 'sdsd', 1);
+INSERT INTO estado_aud (est_id, rev, revtype, est_nome, est_uf, pais) VALUES (10, 58, 2, NULL, NULL, NULL);
+INSERT INTO estado_aud (est_id, rev, revtype, est_nome, est_uf, pais) VALUES (11, 90, 0, 'sdsds', 'dsd', NULL);
+INSERT INTO estado_aud (est_id, rev, revtype, est_nome, est_uf, pais) VALUES (11, 91, 1, 'sdsdsdsdsds', 'dsddsds', NULL);
+INSERT INTO estado_aud (est_id, rev, revtype, est_nome, est_uf, pais) VALUES (11, 92, 1, 'sdsdsdsdsds', 'dsddsdssds', NULL);
+INSERT INTO estado_aud (est_id, rev, revtype, est_nome, est_uf, pais) VALUES (12, 93, 0, 'sdsdsdsdsds', 'dsddsdssds', NULL);
+INSERT INTO estado_aud (est_id, rev, revtype, est_nome, est_uf, pais) VALUES (13, 94, 0, 'sdsdsdsdsds', 'dsddsdssds', NULL);
+INSERT INTO estado_aud (est_id, rev, revtype, est_nome, est_uf, pais) VALUES (14, 95, 0, 'dsds', 'dsds', NULL);
+INSERT INTO estado_aud (est_id, rev, revtype, est_nome, est_uf, pais) VALUES (15, 96, 0, 'sdsd', 'dsds', 1);
+INSERT INTO estado_aud (est_id, rev, revtype, est_nome, est_uf, pais) VALUES (16, 97, 0, 'sdsd', 'dsds', 1);
+INSERT INTO estado_aud (est_id, rev, revtype, est_nome, est_uf, pais) VALUES (17, 98, 0, 'sds', 'dsd', 1);
+INSERT INTO estado_aud (est_id, rev, revtype, est_nome, est_uf, pais) VALUES (17, 99, 1, 'sdsdsdsds', 'dsd', 1);
+INSERT INTO estado_aud (est_id, rev, revtype, est_nome, est_uf, pais) VALUES (12, 101, 2, NULL, NULL, NULL);
+INSERT INTO estado_aud (est_id, rev, revtype, est_nome, est_uf, pais) VALUES (14, 102, 2, NULL, NULL, NULL);
+INSERT INTO estado_aud (est_id, rev, revtype, est_nome, est_uf, pais) VALUES (13, 103, 1, 'sdsdsdsdsdsdsds', 'dsddsdssds', 1);
+INSERT INTO estado_aud (est_id, rev, revtype, est_nome, est_uf, pais) VALUES (11, 106, 1, 'sdsdsdsdsds', 'dsddsdssds', 1);
+
+
+--
+-- TOC entry 2272 (class 0 OID 0)
+-- Dependencies: 191
+-- Name: estado_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
+--
+
+SELECT pg_catalog.setval('estado_seq', 106, true);
+
+
+--
+-- TOC entry 2231 (class 0 OID 128156)
+-- Dependencies: 192
+-- Data for Name: filial; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+INSERT INTO filial (fil_codigo, fil_autenticaremail, fil_cep, fil_descricao, fil_endereco, fil_enderecoemail, fil_fax, fil_fone, fil_portaemail, fil_segurancaemail, fil_senhaemail, fil_statuscomissao, fil_usuarioemail, bai_codigo, cid_codigo, fil_servidoremail, versionnum, fil_autenticacaoemail) VALUES (1, 'true', '', 'sds', 'dsds', '', '(54)5454-4545', '(54)5455-4554', NULL, 'TIPO_EMAIL_SEGURANCA_SEM_CRIPTOGRAFIA', '', '', '', 1, 12, 'dsdsdsdsdsdsd@gmail.com', 0, NULL);
+
+
+--
+-- TOC entry 2232 (class 0 OID 128162)
+-- Dependencies: 193
+-- Data for Name: filial_aud; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+INSERT INTO filial_aud (fil_codigo, rev, revtype, fil_autenticaremail, fil_cep, fil_descricao, fil_endereco, fil_enderecoemail, fil_fax, fil_fone, fil_portaemail, fil_segurancaemail, fil_senhaemail, fil_statuscomissao, fil_usuarioemail, bai_codigo, cid_codigo, fil_servidoremail, fil_autenticacaoemail) VALUES (1, 162, 0, 'true', '', 'sds', 'dsds', '', '(54)5454-4545', '(54)5455-4554', NULL, 'TIPO_EMAIL_SEGURANCA_SEM_CRIPTOGRAFIA', '', '', '', 1, 12, NULL, NULL);
+INSERT INTO filial_aud (fil_codigo, rev, revtype, fil_autenticaremail, fil_cep, fil_descricao, fil_endereco, fil_enderecoemail, fil_fax, fil_fone, fil_portaemail, fil_segurancaemail, fil_senhaemail, fil_statuscomissao, fil_usuarioemail, bai_codigo, cid_codigo, fil_servidoremail, fil_autenticacaoemail) VALUES (1, 163, 1, 'false', '', 'sds', 'dsds', '', '(54)5454-4545', '(54)5455-4554', NULL, 'TIPO_EMAIL_SEGURANCA_SEM_CRIPTOGRAFIA', '', '', '', 1, 12, NULL, NULL);
+INSERT INTO filial_aud (fil_codigo, rev, revtype, fil_autenticaremail, fil_cep, fil_descricao, fil_endereco, fil_enderecoemail, fil_fax, fil_fone, fil_portaemail, fil_segurancaemail, fil_senhaemail, fil_statuscomissao, fil_usuarioemail, bai_codigo, cid_codigo, fil_servidoremail, fil_autenticacaoemail) VALUES (1, 164, 1, 'true', '', 'sds', 'dsds', '', '(54)5454-4545', '(54)5455-4554', NULL, 'TIPO_EMAIL_SEGURANCA_SEM_CRIPTOGRAFIA', '', '', '', 1, 12, NULL, NULL);
+INSERT INTO filial_aud (fil_codigo, rev, revtype, fil_autenticaremail, fil_cep, fil_descricao, fil_endereco, fil_enderecoemail, fil_fax, fil_fone, fil_portaemail, fil_segurancaemail, fil_senhaemail, fil_statuscomissao, fil_usuarioemail, bai_codigo, cid_codigo, fil_servidoremail, fil_autenticacaoemail) VALUES (4, 165, 0, 'true', '', 'ddf', 'dfdf', '', '', '', NULL, 'TIPO_EMAIL_SEGURANCA_SEM_CRIPTOGRAFIA', '', '', '', 1, 6, NULL, NULL);
+INSERT INTO filial_aud (fil_codigo, rev, revtype, fil_autenticaremail, fil_cep, fil_descricao, fil_endereco, fil_enderecoemail, fil_fax, fil_fone, fil_portaemail, fil_segurancaemail, fil_senhaemail, fil_statuscomissao, fil_usuarioemail, bai_codigo, cid_codigo, fil_servidoremail, fil_autenticacaoemail) VALUES (4, 166, 1, 'false', '', 'ddf', 'dfdf', '', '', '', NULL, 'TIPO_EMAIL_SEGURANCA_SEM_CRIPTOGRAFIA', '', '', '', 1, 6, NULL, NULL);
+INSERT INTO filial_aud (fil_codigo, rev, revtype, fil_autenticaremail, fil_cep, fil_descricao, fil_endereco, fil_enderecoemail, fil_fax, fil_fone, fil_portaemail, fil_segurancaemail, fil_senhaemail, fil_statuscomissao, fil_usuarioemail, bai_codigo, cid_codigo, fil_servidoremail, fil_autenticacaoemail) VALUES (4, 167, 1, 'true', '', 'ddf', 'dfdf', '', '', '', NULL, 'TIPO_EMAIL_SEGURANCA_SEM_CRIPTOGRAFIA', '', '', '', 1, 6, NULL, NULL);
+INSERT INTO filial_aud (fil_codigo, rev, revtype, fil_autenticaremail, fil_cep, fil_descricao, fil_endereco, fil_enderecoemail, fil_fax, fil_fone, fil_portaemail, fil_segurancaemail, fil_senhaemail, fil_statuscomissao, fil_usuarioemail, bai_codigo, cid_codigo, fil_servidoremail, fil_autenticacaoemail) VALUES (1, 170, 1, 'true', '', 'sds', 'dsds', '', '(54)5454-4545', '(54)5455-4554', NULL, 'TIPO_EMAIL_SEGURANCA_SEM_CRIPTOGRAFIA', '', '', '', 1, 12, 'dsdsdsdsdsdsd@gmail.com', NULL);
+INSERT INTO filial_aud (fil_codigo, rev, revtype, fil_autenticaremail, fil_cep, fil_descricao, fil_endereco, fil_enderecoemail, fil_fax, fil_fone, fil_portaemail, fil_segurancaemail, fil_senhaemail, fil_statuscomissao, fil_usuarioemail, bai_codigo, cid_codigo, fil_servidoremail, fil_autenticacaoemail) VALUES (4, 497, 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
+
+--
+-- TOC entry 2273 (class 0 OID 0)
+-- Dependencies: 194
+-- Name: filial_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
+--
+
+SELECT pg_catalog.setval('filial_seq', 4, true);
+
+
+--
+-- TOC entry 2274 (class 0 OID 0)
+-- Dependencies: 195
+-- Name: hibernate_sequence; Type: SEQUENCE SET; Schema: public; Owner: admin
+--
+
+SELECT pg_catalog.setval('hibernate_sequence', 558, true);
+
+
+--
+-- TOC entry 2235 (class 0 OID 128172)
+-- Dependencies: 196
+-- Data for Name: mensagem; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+INSERT INTO mensagem (men_codigo, men_assunto, men_datahora, men_exigirresposta, men_lido, usr_destino, usr_origem, men_mensagem, versionnum) VALUES (21, 'Urgente', '2016-05-15 14:40:27.439', false, false, 2, 1, 'Resolver problema...', 0);
+INSERT INTO mensagem (men_codigo, men_assunto, men_datahora, men_exigirresposta, men_lido, usr_destino, usr_origem, men_mensagem, versionnum) VALUES (22, 'responda', '2016-05-15 14:41:05.995', false, false, 2, 1, 'tese', 0);
+INSERT INTO mensagem (men_codigo, men_assunto, men_datahora, men_exigirresposta, men_lido, usr_destino, usr_origem, men_mensagem, versionnum) VALUES (23, 'Responda', '2016-05-15 15:01:49.893', false, false, 2, 1, 'teste', 0);
+INSERT INTO mensagem (men_codigo, men_assunto, men_datahora, men_exigirresposta, men_lido, usr_destino, usr_origem, men_mensagem, versionnum) VALUES (24, 'teste', '2016-05-15 15:04:31.211', false, false, 2, 1, 'teste', 0);
+
+
+--
+-- TOC entry 2236 (class 0 OID 128178)
+-- Dependencies: 197
+-- Data for Name: mensagem_aud; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+INSERT INTO mensagem_aud (men_codigo, rev, revtype, men_assunto, men_datahora, men_exigirresposta, men_lido, usr_destino, usr_origem, men_mensagem) VALUES (21, 544, 0, 'Urgente', '2016-05-15 14:40:27.439', false, false, 2, 1, 'Resolver problema...');
+INSERT INTO mensagem_aud (men_codigo, rev, revtype, men_assunto, men_datahora, men_exigirresposta, men_lido, usr_destino, usr_origem, men_mensagem) VALUES (22, 545, 0, 'responda', '2016-05-15 14:41:05.995', false, false, 2, 1, 'tese');
+INSERT INTO mensagem_aud (men_codigo, rev, revtype, men_assunto, men_datahora, men_exigirresposta, men_lido, usr_destino, usr_origem, men_mensagem) VALUES (23, 554, 0, 'Responda', '2016-05-15 15:01:49.893', false, false, 2, 1, 'teste');
+INSERT INTO mensagem_aud (men_codigo, rev, revtype, men_assunto, men_datahora, men_exigirresposta, men_lido, usr_destino, usr_origem, men_mensagem) VALUES (24, 557, 0, 'teste', '2016-05-15 15:04:31.211', false, false, 2, 1, 'teste');
+
+
+--
+-- TOC entry 2275 (class 0 OID 0)
+-- Dependencies: 198
+-- Name: mensagem_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
+--
+
+SELECT pg_catalog.setval('mensagem_seq', 24, true);
+
+
+--
+-- TOC entry 2238 (class 0 OID 128186)
+-- Dependencies: 199
+-- Data for Name: pais; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+INSERT INTO pais (pai_id, pai_nome, pai_sigla, versionnum) VALUES (1, 'BRASIL', 'BR11', 0);
+
+
+--
+-- TOC entry 2239 (class 0 OID 128189)
+-- Dependencies: 200
+-- Data for Name: pais_aud; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+INSERT INTO pais_aud (pai_id, rev, revtype, pai_nome, pai_sigla) VALUES (2, 59, 0, 'sdsd', 'sdsds');
+INSERT INTO pais_aud (pai_id, rev, revtype, pai_nome, pai_sigla) VALUES (2, 60, 2, NULL, NULL);
+INSERT INTO pais_aud (pai_id, rev, revtype, pai_nome, pai_sigla) VALUES (3, 61, 0, 'dd', 'dddddddddddd');
+INSERT INTO pais_aud (pai_id, rev, revtype, pai_nome, pai_sigla) VALUES (3, 62, 2, NULL, NULL);
+INSERT INTO pais_aud (pai_id, rev, revtype, pai_nome, pai_sigla) VALUES (4, 63, 0, '1', '11');
+INSERT INTO pais_aud (pai_id, rev, revtype, pai_nome, pai_sigla) VALUES (4, 64, 2, NULL, NULL);
+INSERT INTO pais_aud (pai_id, rev, revtype, pai_nome, pai_sigla) VALUES (1, 65, 1, 'BRASIL', 'BR11');
+INSERT INTO pais_aud (pai_id, rev, revtype, pai_nome, pai_sigla) VALUES (5, 66, 0, 'iui', 'iiiiiiiiiii');
+INSERT INTO pais_aud (pai_id, rev, revtype, pai_nome, pai_sigla) VALUES (5, 67, 2, NULL, NULL);
+
+
+--
+-- TOC entry 2276 (class 0 OID 0)
+-- Dependencies: 201
+-- Name: pais_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
+--
+
+SELECT pg_catalog.setval('pais_seq', 8, true);
+
+
+--
+-- TOC entry 2241 (class 0 OID 128194)
+-- Dependencies: 202
+-- Data for Name: produto; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+INSERT INTO produto (prd_codigo, prd_comissaodiferefiliial, prd_comissaodifereusuario, prd_comissaofilial, prd_comissaousuario, prd_descricao, versionnum) VALUES (4, true, false, 600.0000, 409.9000, 'Produto sistema wem em java', 1);
+
+
+--
+-- TOC entry 2242 (class 0 OID 128197)
+-- Dependencies: 203
+-- Data for Name: produto_aud; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+INSERT INTO produto_aud (prd_codigo, rev, revtype, prd_comissaodiferefiliial, prd_comissaodifereusuario, prd_comissaofilial, prd_comissaousuario, prd_descricao) VALUES (1, 68, 0, true, false, 4.4545, 5.4545, 'eerer');
+INSERT INTO produto_aud (prd_codigo, rev, revtype, prd_comissaodiferefiliial, prd_comissaodifereusuario, prd_comissaofilial, prd_comissaousuario, prd_descricao) VALUES (2, 279, 0, false, false, 0.0044, 0.0044, 'sds');
+INSERT INTO produto_aud (prd_codigo, rev, revtype, prd_comissaodiferefiliial, prd_comissaodifereusuario, prd_comissaofilial, prd_comissaousuario, prd_descricao) VALUES (1, 448, 2, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO produto_aud (prd_codigo, rev, revtype, prd_comissaodiferefiliial, prd_comissaodifereusuario, prd_comissaofilial, prd_comissaousuario, prd_descricao) VALUES (2, 449, 1, true, false, 0.0000, 0.0000, 'sdssdsdsd sd');
+INSERT INTO produto_aud (prd_codigo, rev, revtype, prd_comissaodiferefiliial, prd_comissaodifereusuario, prd_comissaofilial, prd_comissaousuario, prd_descricao) VALUES (3, 450, 0, false, false, 666.6600, 6.6600, 'wwde');
+INSERT INTO produto_aud (prd_codigo, rev, revtype, prd_comissaodiferefiliial, prd_comissaodifereusuario, prd_comissaofilial, prd_comissaousuario, prd_descricao) VALUES (3, 481, 2, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO produto_aud (prd_codigo, rev, revtype, prd_comissaodiferefiliial, prd_comissaodifereusuario, prd_comissaofilial, prd_comissaousuario, prd_descricao) VALUES (2, 482, 2, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO produto_aud (prd_codigo, rev, revtype, prd_comissaodiferefiliial, prd_comissaodifereusuario, prd_comissaofilial, prd_comissaousuario, prd_descricao) VALUES (4, 535, 0, true, false, 600.0000, 0.4000, 'Produto sistema wem em java');
+INSERT INTO produto_aud (prd_codigo, rev, revtype, prd_comissaodiferefiliial, prd_comissaodifereusuario, prd_comissaofilial, prd_comissaousuario, prd_descricao) VALUES (4, 536, 1, true, false, 600.0000, 409.9000, 'Produto sistema wem em java');
+
+
+--
+-- TOC entry 2277 (class 0 OID 0)
+-- Dependencies: 204
+-- Name: produto_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
+--
+
+SELECT pg_catalog.setval('produto_seq', 4, true);
+
+
+--
+-- TOC entry 2244 (class 0 OID 128202)
+-- Dependencies: 205
+-- Data for Name: revinfo; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (2, 1409438071329, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (3, 1409438079282, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (4, 1409438143813, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (5, 1409438153652, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (6, 1409438158733, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (7, 1409438182705, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (8, 1409441545192, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (9, 1409441553917, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (10, 1409498382410, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (11, 1409500687784, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (12, 1409501048382, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (13, 1409501104959, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (14, 1409501105581, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (15, 1409501105940, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (16, 1409501527451, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (17, 1409501586849, 2);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (18, 1409501592496, 2);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (19, 1409501597142, 2);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (20, 1409501698343, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (21, 1409501835389, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (22, 1409501930130, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (23, 1409503433083, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (24, 1409503615206, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (25, 1409503830588, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (26, 1409504062380, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (27, 1409506396593, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (28, 1409507067580, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (29, 1409507076249, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (30, 1409507316762, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (31, 1409509777645, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (32, 1409509806503, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (33, 1409510111715, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (34, 1409511165996, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (35, 1409511168235, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (36, 1409511170701, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (37, 1409511181324, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (38, 1409511185479, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (39, 1409511266521, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (40, 1409511284141, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (41, 1409512151558, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (42, 1409513141004, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (43, 1409513148738, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (44, 1409513980391, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (45, 1410396045360, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (46, 1410396069748, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (47, 1410397235760, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (48, 1410397258550, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (49, 1410406269091, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (50, 1410406588411, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (51, 1410406624143, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (52, 1410406789954, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (53, 1410406792544, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (54, 1410406796996, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (55, 1410406799285, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (56, 1410406801611, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (57, 1410408340908, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (58, 1410408348562, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (59, 1410912749835, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (60, 1410912760004, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (61, 1410925484805, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (62, 1410925495420, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (63, 1410927191747, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (64, 1410927197625, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (65, 1410927208249, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (66, 1410928263356, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (67, 1410928266197, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (68, 1410928319096, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (69, 1410928330083, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (70, 1410928340930, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (71, 1410928413282, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (72, 1410928416436, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (73, 1410928418893, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (74, 1410928421474, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (75, 1410928423896, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (76, 1410928425652, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (77, 1410928427644, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (78, 1410928429112, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (79, 1410928440072, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (80, 1410928473597, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (81, 1410928536223, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (82, 1410928548556, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (83, 1411601897751, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (84, 1411602640356, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (85, 1411602642455, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (86, 1411602657726, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (87, 1411602690989, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (88, 1411602726248, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (89, 1411602894283, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (90, 1411603357199, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (91, 1411603362517, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (92, 1411603372238, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (93, 1411603436263, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (94, 1411603439510, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (95, 1411603464679, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (96, 1411604180110, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (97, 1411604262610, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (98, 1411604266044, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (99, 1411604270554, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (100, 1411604283651, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (101, 1411604300620, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (102, 1411604303514, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (103, 1411604308685, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (104, 1411604318492, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (105, 1411604325032, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (106, 1411604380363, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (107, 1411605132468, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (108, 1411605266826, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (109, 1411605271643, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (110, 1411605295809, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (111, 1411605338596, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (112, 1411610244929, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (113, 1411611302799, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (114, 1411611494805, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (115, 1411611501075, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (116, 1411611527638, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (117, 1411611535152, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (118, 1411611864513, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (119, 1411613434521, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (120, 1411613439163, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (121, 1411613441300, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (122, 1411613512173, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (123, 1411618864389, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (124, 1411618900146, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (125, 1411618905786, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (126, 1411618913229, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (127, 1411683511053, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (128, 1411683710591, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (129, 1411683795268, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (130, 1411683803651, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (131, 1411683887009, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (132, 1411684100655, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (133, 1411684143676, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (134, 1411684258446, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (135, 1411684262832, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (136, 1411684284276, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (137, 1411684312752, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (138, 1411684314850, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (139, 1411684386119, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (140, 1411684449402, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (141, 1411684452406, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (142, 1411684454512, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (143, 1411684460820, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (144, 1411684470217, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (145, 1411684474673, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (146, 1411684545175, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (147, 1411684563433, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (148, 1411684593075, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (149, 1411684617918, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (150, 1411684630182, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (151, 1411684648422, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (152, 1411684681706, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (153, 1411684707518, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (154, 1411684730582, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (155, 1411684748088, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (156, 1411684763210, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (157, 1411684879753, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (158, 1411684940370, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (160, 1411685059225, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (161, 1411685619067, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (159, 1411685053340, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (162, 1411951550722, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (163, 1411951573402, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (164, 1411951688349, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (165, 1411952820909, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (166, 1411952825662, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (167, 1411952831474, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (168, 1411953549742, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (169, 1411954160808, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (170, 1411957259954, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (171, 1411958339102, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (172, 1411958341481, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (173, 1411958342791, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (174, 1411958672002, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (175, 1411958680871, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (176, 1411958686057, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (177, 1411959115893, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (178, 1411959127606, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (179, 1411959130083, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (180, 1411959133401, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (181, 1411960923068, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (182, 1411960923207, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (183, 1411960923285, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (184, 1411960923349, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (185, 1411960923419, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (186, 1411960923450, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (187, 1411961001540, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (188, 1411961007796, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (189, 1411961112840, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (190, 1411961120334, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (191, 1411961126500, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (192, 1411961139123, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (193, 1411961147369, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (194, 1411961149109, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (195, 1411961740775, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (196, 1411961744119, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (197, 1411961754183, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (198, 1411961757333, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (199, 1411961891640, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (200, 1411961906526, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (201, 1411963047477, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (202, 1411963124655, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (203, 1411964041293, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (204, 1412031653003, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (205, 1412031661320, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (206, 1412031675980, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (207, 1412032998278, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (208, 1412036927671, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (209, 1412036935013, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (210, 1412046568658, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (211, 1412046570893, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (212, 1412046638542, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (213, 1412046640455, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (214, 1412046735539, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (215, 1412047770923, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (216, 1412048130832, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (217, 1412048418389, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (218, 1412048506000, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (219, 1412048507077, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (220, 1412048508151, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (221, 1412048509190, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (222, 1412048510201, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (223, 1412048518400, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (224, 1412209258060, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (225, 1412209264321, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (226, 1412209279387, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (227, 1412209287289, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (228, 1412209295905, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (229, 1412209301299, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (230, 1412209805696, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (231, 1412209825912, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (232, 1412209832102, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (233, 1412209836170, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (234, 1412210789925, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (235, 1412213292897, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (236, 1412213295439, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (237, 1412213297823, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (238, 1412213300859, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (239, 1412213335107, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (240, 1412213341186, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (241, 1412213343634, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (242, 1412379764557, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (243, 1412379770532, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (244, 1412379781630, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (245, 1412380591220, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (246, 1412380592857, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (247, 1412380594043, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (248, 1412380798629, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (249, 1412380871459, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (250, 1412380875372, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (251, 1412380880910, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (252, 1412640893117, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (253, 1412641151324, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (254, 1412641197025, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (255, 1412642639703, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (256, 1412642651260, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (257, 1412642666989, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (258, 1412642902064, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (259, 1412642907367, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (260, 1412642919958, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (261, 1412642969747, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (262, 1412642972147, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (263, 1412643177058, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (264, 1412643184881, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (265, 1412643274676, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (266, 1412643277156, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (267, 1412643281967, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (268, 1412643292251, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (269, 1412643294797, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (270, 1412643366313, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (271, 1412643368592, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (272, 1412643392828, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (273, 1412643403943, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (274, 1412643411676, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (275, 1412644573281, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (276, 1412644580438, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (277, 1412644612071, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (278, 1412644627924, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (279, 1412644644061, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (280, 1412720623624, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (281, 1412722249916, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (282, 1412723201186, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (283, 1412724178065, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (284, 1412724197676, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (285, 1412724337277, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (286, 1412724376988, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (287, 1412724414500, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (288, 1412724437508, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (289, 1412725200919, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (290, 1412725417200, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (291, 1412725489704, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (292, 1412725698975, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (293, 1412726231869, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (294, 1412726253093, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (295, 1412726282627, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (296, 1412726528782, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (297, 1412726553743, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (298, 1412726569004, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (299, 1412726582941, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (300, 1412726809481, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (301, 1412726881609, 2);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (302, 1412726905343, 2);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (303, 1412726935513, 2);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (304, 1412726943530, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (305, 1412726954062, 2);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (306, 1412726965279, 2);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (307, 1412727449424, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (308, 1412727458536, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (309, 1412727468540, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (310, 1412727479528, 2);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (311, 1412727502594, 2);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (312, 1412727510703, 2);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (313, 1412727535112, 2);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (314, 1412727564221, 2);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (315, 1412727569328, 2);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (316, 1412727727746, 2);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (317, 1412728233234, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (318, 1412728250082, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (319, 1412728261739, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (320, 1412728293031, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (321, 1412728311486, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (322, 1412728322886, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (323, 1412728425588, 2);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (324, 1412728455989, 2);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (325, 1412728847258, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (326, 1412728863621, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (327, 1412728869891, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (328, 1412729798988, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (329, 1412729855938, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (330, 1412812756187, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (331, 1412812950948, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (332, 1412815986371, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (333, 1412816079220, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (334, 1412816107339, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (335, 1412817491126, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (336, 1412817581764, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (337, 1412817693657, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (338, 1412817811024, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (339, 1412817817040, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (340, 1412817853650, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (341, 1412824051250, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (342, 1412824460080, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (343, 1412824623869, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (344, 1412827372750, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (345, 1412827498178, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (346, 1412827791861, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (347, 1412828064850, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (348, 1412828245300, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (349, 1412828366011, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (350, 1412828427358, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (351, 1412828798937, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (352, 1412828846030, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (353, 1412828868058, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (354, 1412828880531, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (355, 1412828886227, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (356, 1412828893215, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (357, 1412828900476, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (358, 1412828913322, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (359, 1412829684486, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (360, 1412829716188, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (361, 1412829737422, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (362, 1412829764575, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (363, 1412829776529, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (364, 1412829951459, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (365, 1412829958416, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (366, 1412829962475, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (367, 1412829965808, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (368, 1412829993632, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (369, 1412830005412, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (370, 1412898144254, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (371, 1412898257316, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (372, 1412898276728, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (373, 1412898304003, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (374, 1412898750021, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (375, 1412898759496, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (376, 1412898967083, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (377, 1412898979766, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (378, 1412899181656, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (379, 1412899276840, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (380, 1412899306256, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (381, 1412899312877, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (382, 1412899408356, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (383, 1416260481604, 2);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (384, 1416261034401, 2);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (385, 1416261117856, 2);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (386, 1416261778214, 2);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (387, 1420638697391, 2);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (388, 1420638711967, 2);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (389, 1420638739797, 2);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (390, 1420638751511, 2);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (391, 1420638779134, 2);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (392, 1420638876289, 2);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (393, 1420638931063, 2);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (394, 1422037559601, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (395, 1422037578094, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (396, 1422037613462, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (397, 1422037688955, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (398, 1438534591303, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (399, 1438534593195, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (400, 1438534741607, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (401, 1438534747400, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (402, 1438534752512, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (403, 1438535006572, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (404, 1438535030831, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (405, 1438535064999, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (406, 1438535843372, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (407, 1438535884231, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (408, 1438535930648, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (409, 1438535937306, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (410, 1438535945492, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (411, 1438535949433, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (412, 1443575303005, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (413, 1443743945882, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (414, 1443744706971, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (415, 1443744860624, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (416, 1443744892255, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (417, 1443744923038, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (418, 1443745315616, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (419, 1443929055454, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (420, 1443929085763, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (421, 1444878203241, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (422, 1449717767404, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (423, 1449717802935, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (424, 1449717813302, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (425, 1449717830976, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (426, 1449717881757, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (427, 1449718049198, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (428, 1449718065056, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (429, 1449718089073, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (430, 1449718117128, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (431, 1449718155398, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (432, 1449718454825, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (433, 1449718460719, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (434, 1449718472865, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (435, 1449718487590, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (436, 1449718506103, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (437, 1449718522893, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (438, 1457579169021, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (439, 1458607411471, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (440, 1458607422140, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (441, 1460593115768, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (442, 1460593119498, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (443, 1460593122631, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (444, 1460593127328, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (445, 1460593131524, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (446, 1460593135018, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (447, 1460593152120, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (448, 1460593197430, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (449, 1460593205956, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (450, 1460593212792, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (451, 1461900146329, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (452, 1461900150454, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (453, 1461900152221, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (454, 1461900153862, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (455, 1461900161242, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (456, 1461900162890, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (457, 1461900164241, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (458, 1461900165460, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (459, 1461900178991, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (460, 1461900183269, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (461, 1461900192541, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (462, 1461900195322, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (463, 1461900196319, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (464, 1463330410491, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (465, 1463330472884, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (466, 1463330511529, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (467, 1463330528455, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (468, 1463330548264, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (469, 1463330550380, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (470, 1463330552590, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (471, 1463330593263, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (472, 1463330610353, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (473, 1463332112168, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (474, 1463332119328, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (475, 1463332121172, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (476, 1463332122958, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (477, 1463332124641, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (478, 1463332126109, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (479, 1463332134493, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (480, 1463332137347, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (481, 1463332154526, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (482, 1463332156087, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (483, 1463332164178, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (484, 1463332172566, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (485, 1463332183483, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (486, 1463332185945, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (487, 1463332187997, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (488, 1463332189820, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (489, 1463332690492, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (490, 1463332699348, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (491, 1463332701379, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (492, 1463332703773, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (493, 1463332724378, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (494, 1463332726610, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (495, 1463332728683, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (496, 1463332804302, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (497, 1463332864222, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (498, 1463332898019, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (499, 1463332899983, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (500, 1463332901926, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (501, 1463332905258, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (502, 1463332906908, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (503, 1463332909003, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (504, 1463332910965, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (505, 1463332915269, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (506, 1463332917159, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (507, 1463332919320, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (508, 1463332920696, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (509, 1463332922422, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (510, 1463332924297, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (511, 1463332925733, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (512, 1463332927249, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (513, 1463332929067, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (514, 1463332931181, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (515, 1463332932923, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (516, 1463332934417, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (517, 1463332936931, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (518, 1463332940253, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (519, 1463332945822, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (520, 1463332947562, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (521, 1463332952917, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (522, 1463333098568, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (523, 1463333171929, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (524, 1463333183960, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (525, 1463333205027, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (526, 1463333240134, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (527, 1463333446026, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (528, 1463333570760, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (529, 1463333579658, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (530, 1463333641218, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (531, 1463333644546, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (532, 1463333647443, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (533, 1463333656293, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (534, 1463333668682, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (535, 1463333713807, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (536, 1463333722536, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (537, 1463333808151, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (538, 1463333821473, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (539, 1463333872207, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (540, 1463333918209, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (541, 1463333928568, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (542, 1463333960642, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (543, 1463334014802, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (544, 1463334049404, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (545, 1463334090119, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (546, 1463334111029, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (547, 1463335121849, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (548, 1463335181742, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (549, 1463335187376, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (550, 1463335210636, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (551, 1463335258812, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (552, 1463335287555, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (553, 1463335298042, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (554, 1463335326549, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (555, 1463335366425, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (556, 1463335387630, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (557, 1463335481211, 1);
+INSERT INTO revinfo (id, "timestamp", entidade) VALUES (558, 1463335530282, 1);
+
+
+--
+-- TOC entry 2245 (class 0 OID 128205)
+-- Dependencies: 206
+-- Data for Name: sendemail; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+
+
+--
+-- TOC entry 2246 (class 0 OID 128211)
+-- Dependencies: 207
+-- Data for Name: sendemail_aud; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+
+
+--
+-- TOC entry 2278 (class 0 OID 0)
+-- Dependencies: 208
+-- Name: sendemail_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
+--
+
+SELECT pg_catalog.setval('sendemail_seq', 16, false);
+
+
+--
+-- TOC entry 2248 (class 0 OID 128219)
+-- Dependencies: 209
+-- Data for Name: serie; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+INSERT INTO serie (ser_codigo, ser_descricao, versionnum) VALUES (94, 'serie', 0);
+
+
+--
+-- TOC entry 2249 (class 0 OID 128222)
+-- Dependencies: 210
+-- Data for Name: serie_aud; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+INSERT INTO serie_aud (ser_codigo, rev, revtype, ser_descricao) VALUES (94, 534, 0, 'serie');
+
+
+--
+-- TOC entry 2279 (class 0 OID 0)
+-- Dependencies: 211
+-- Name: serie_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
+--
+
+SELECT pg_catalog.setval('serie_seq', 94, true);
+
+
+--
+-- TOC entry 2251 (class 0 OID 128227)
+-- Dependencies: 212
+-- Data for Name: titulo; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+INSERT INTO titulo (tit_codigo, tit_acrescimobaixa, tit_databaixa, tit_datahora, tit_datavencimento, tit_descontobaixa, tit_documento, tit_observacao, tit_origem, tit_tipo, tit_valor, tit_valorbaixa, ent_codigo, ent_codigoabertura, tit_baixado, ent_codigobaixa, versionnum) VALUES (14, 5.0000, '2016-05-15', '2016-05-15 14:38:01.138', '2016-05-27', 55.0000, '87878787', '', 'COMISSAO', 'PAGAR', 5050.5000, 6.6600, 21, 1, true, 1, 2);
+INSERT INTO titulo (tit_codigo, tit_acrescimobaixa, tit_databaixa, tit_datahora, tit_datavencimento, tit_descontobaixa, tit_documento, tit_observacao, tit_origem, tit_tipo, tit_valor, tit_valorbaixa, ent_codigo, ent_codigoabertura, tit_baixado, ent_codigobaixa, versionnum) VALUES (16, 665.6500, '2016-05-15', '2016-05-15 15:00:32.248', '2016-05-27', 5.6500, '665656', '', 'COMISSAO', 'PAGAR', 5656.5600, 9899.8900, 22, 1, true, 1, 1);
+INSERT INTO titulo (tit_codigo, tit_acrescimobaixa, tit_databaixa, tit_datahora, tit_datavencimento, tit_descontobaixa, tit_documento, tit_observacao, tit_origem, tit_tipo, tit_valor, tit_valorbaixa, ent_codigo, ent_codigoabertura, tit_baixado, ent_codigobaixa, versionnum) VALUES (15, 656.6600, '2016-05-15', '2016-05-15 14:58:17.066', '2016-05-20', 56.5600, '79998', '', 'COMISSAO', 'RECEBER', 65655.6500, 55555.5500, 21, 1, true, 1, 1);
+
+
+--
+-- TOC entry 2252 (class 0 OID 128233)
+-- Dependencies: 213
+-- Data for Name: titulo_aud; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+INSERT INTO titulo_aud (tit_codigo, rev, revtype, tit_acrescimobaixa, tit_databaixa, tit_datahora, tit_datavencimento, tit_descontobaixa, tit_documento, tit_observacao, tit_origem, tit_tipo, tit_valor, tit_valorbaixa, ent_codigo, ent_codigoabertura, ent_codigobaixa, tit_baixado) VALUES (14, 540, 0, NULL, NULL, '2016-05-15 14:38:01.138', '2016-05-27', NULL, '87878787', '', 'COMISSAO', 'RECEBER', 5050.5000, NULL, 21, 1, NULL, false);
+INSERT INTO titulo_aud (tit_codigo, rev, revtype, tit_acrescimobaixa, tit_databaixa, tit_datahora, tit_datavencimento, tit_descontobaixa, tit_documento, tit_observacao, tit_origem, tit_tipo, tit_valor, tit_valorbaixa, ent_codigo, ent_codigoabertura, ent_codigobaixa, tit_baixado) VALUES (14, 541, 1, NULL, NULL, '2016-05-15 14:38:01.138', '2016-05-27', NULL, '87878787', '', 'COMISSAO', 'PAGAR', 5050.5000, NULL, 21, 1, NULL, false);
+INSERT INTO titulo_aud (tit_codigo, rev, revtype, tit_acrescimobaixa, tit_databaixa, tit_datahora, tit_datavencimento, tit_descontobaixa, tit_documento, tit_observacao, tit_origem, tit_tipo, tit_valor, tit_valorbaixa, ent_codigo, ent_codigoabertura, ent_codigobaixa, tit_baixado) VALUES (14, 542, 1, 5.0000, '2016-05-15', '2016-05-15 14:38:01.138', '2016-05-27', 55.0000, '87878787', '', 'COMISSAO', 'PAGAR', 5050.5000, 6.6600, 21, 1, 1, true);
+INSERT INTO titulo_aud (tit_codigo, rev, revtype, tit_acrescimobaixa, tit_databaixa, tit_datahora, tit_datavencimento, tit_descontobaixa, tit_documento, tit_observacao, tit_origem, tit_tipo, tit_valor, tit_valorbaixa, ent_codigo, ent_codigoabertura, ent_codigobaixa, tit_baixado) VALUES (15, 547, 0, NULL, NULL, '2016-05-15 14:58:17.066', '2016-05-20', NULL, '79998', '', 'COMISSAO', 'RECEBER', 65655.6500, NULL, 21, 1, NULL, false);
+INSERT INTO titulo_aud (tit_codigo, rev, revtype, tit_acrescimobaixa, tit_databaixa, tit_datahora, tit_datavencimento, tit_descontobaixa, tit_documento, tit_observacao, tit_origem, tit_tipo, tit_valor, tit_valorbaixa, ent_codigo, ent_codigoabertura, ent_codigobaixa, tit_baixado) VALUES (16, 551, 0, NULL, NULL, '2016-05-15 15:00:32.248', '2016-05-27', NULL, '665656', '', 'COMISSAO', 'PAGAR', 5656.5600, NULL, 22, 1, NULL, false);
+INSERT INTO titulo_aud (tit_codigo, rev, revtype, tit_acrescimobaixa, tit_databaixa, tit_datahora, tit_datavencimento, tit_descontobaixa, tit_documento, tit_observacao, tit_origem, tit_tipo, tit_valor, tit_valorbaixa, ent_codigo, ent_codigoabertura, ent_codigobaixa, tit_baixado) VALUES (16, 552, 1, 665.6500, '2016-05-15', '2016-05-15 15:00:32.248', '2016-05-27', 5.6500, '665656', '', 'COMISSAO', 'PAGAR', 5656.5600, 9899.8900, 22, 1, 1, true);
+INSERT INTO titulo_aud (tit_codigo, rev, revtype, tit_acrescimobaixa, tit_databaixa, tit_datahora, tit_datavencimento, tit_descontobaixa, tit_documento, tit_observacao, tit_origem, tit_tipo, tit_valor, tit_valorbaixa, ent_codigo, ent_codigoabertura, ent_codigobaixa, tit_baixado) VALUES (15, 553, 1, 656.6600, '2016-05-15', '2016-05-15 14:58:17.066', '2016-05-20', 56.5600, '79998', '', 'COMISSAO', 'RECEBER', 65655.6500, 55555.5500, 21, 1, 1, true);
+
+
+--
+-- TOC entry 2280 (class 0 OID 0)
+-- Dependencies: 214
+-- Name: titulo_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
+--
+
+SELECT pg_catalog.setval('titulo_seq', 16, true);
+
+
+--
+-- TOC entry 2254 (class 0 OID 128241)
+-- Dependencies: 215
+-- Data for Name: valor_comissao_filial; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+INSERT INTO valor_comissao_filial (val_codigo, val_descricao, val_valor, val_comissao, val_calculo, val_tipo, versionnum) VALUES (113, 'sem', 555.5500, 53, 'R$', 'PADRAO', 0);
+
+
+--
+-- TOC entry 2255 (class 0 OID 128247)
+-- Dependencies: 216
+-- Data for Name: valor_comissao_filial_aud; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+INSERT INTO valor_comissao_filial_aud (val_codigo, rev, revtype, val_descricao, val_valor, val_comissao, val_calculo, val_tipo) VALUES (113, 543, 0, 'sem', 555.5500, 53, 'R$', 'PADRAO');
+INSERT INTO valor_comissao_filial_aud (val_codigo, rev, revtype, val_descricao, val_valor, val_comissao, val_calculo, val_tipo) VALUES (114, 555, 0, 'teste', 5454.4500, 54, 'R$', 'PADRAO');
+INSERT INTO valor_comissao_filial_aud (val_codigo, rev, revtype, val_descricao, val_valor, val_comissao, val_calculo, val_tipo) VALUES (114, 556, 2, NULL, NULL, NULL, NULL, NULL);
+
+
+--
+-- TOC entry 2281 (class 0 OID 0)
+-- Dependencies: 217
+-- Name: valor_comissao_filial_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
+--
+
+SELECT pg_catalog.setval('valor_comissao_filial_seq', 114, true);
+
+
+--
+-- TOC entry 2257 (class 0 OID 128255)
+-- Dependencies: 218
+-- Data for Name: version; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+INSERT INTO version (version_rank, installed_rank, version, description, type, script, checksum, installed_by, installed_on, execution_time, success) VALUES (1, 1, '1', '<< Flyway Baseline >>', 'BASELINE', '<< Flyway Baseline >>', NULL, 'admin', '2015-08-02 13:18:59.910441', 0, true);
+INSERT INTO version (version_rank, installed_rank, version, description, type, script, checksum, installed_by, installed_on, execution_time, success) VALUES (2, 2, '2', 'init', 'SQL', 'v2_init.sql', -76627651, 'admin', '2015-08-02 13:19:00.201426', 20, true);
+INSERT INTO version (version_rank, installed_rank, version, description, type, script, checksum, installed_by, installed_on, execution_time, success) VALUES (3, 3, '3', '04-10-2016', 'SQL', 'v3_04-10-2016.sql', -640688639, 'admin', '2016-04-10 12:50:34.934406', 231, true);
+
+
+--
+-- TOC entry 1994 (class 2606 OID 128263)
+-- Name: arquivoversao_arquivosql_key; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY arquivoversao
+    ADD CONSTRAINT arquivoversao_arquivosql_key UNIQUE (arquivosql);
+
+
+--
+-- TOC entry 1998 (class 2606 OID 128265)
+-- Name: bairro_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY bairro_aud
+    ADD CONSTRAINT bairro_aud_pkey PRIMARY KEY (bai_codigo, rev);
+
+
+--
+-- TOC entry 1996 (class 2606 OID 128267)
+-- Name: bairro_pkey; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY bairro
+    ADD CONSTRAINT bairro_pkey PRIMARY KEY (bai_codigo);
+
+
+--
+-- TOC entry 2002 (class 2606 OID 128269)
+-- Name: cidade_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY cidade_aud
+    ADD CONSTRAINT cidade_aud_pkey PRIMARY KEY (cid_codigo, rev);
+
+
+--
+-- TOC entry 2000 (class 2606 OID 128271)
+-- Name: cidade_pkey; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY cidade
+    ADD CONSTRAINT cidade_pkey PRIMARY KEY (cid_codigo);
+
+
+--
+-- TOC entry 2006 (class 2606 OID 128273)
+-- Name: comissao_funcionario_filial_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY comissao_funcionario_filial_aud
+    ADD CONSTRAINT comissao_funcionario_filial_aud_pkey PRIMARY KEY (com_codigo, rev);
+
+
+--
+-- TOC entry 2004 (class 2606 OID 128275)
+-- Name: comissao_funcionario_filial_pkey; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY comissao_funcionario_filial
+    ADD CONSTRAINT comissao_funcionario_filial_pkey PRIMARY KEY (com_codigo);
+
+
+--
+-- TOC entry 2010 (class 2606 OID 128277)
+-- Name: empreendimento_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY empreendimento_aud
+    ADD CONSTRAINT empreendimento_aud_pkey PRIMARY KEY (emp_id, rev);
+
+
+--
+-- TOC entry 2008 (class 2606 OID 128279)
+-- Name: empreendimento_pkey; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY empreendimento
+    ADD CONSTRAINT empreendimento_pkey PRIMARY KEY (emp_id);
+
+
+--
+-- TOC entry 2017 (class 2606 OID 128281)
+-- Name: entidade_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY entidade_aud
+    ADD CONSTRAINT entidade_aud_pkey PRIMARY KEY (ent_codigo, rev);
+
+
+--
+-- TOC entry 2012 (class 2606 OID 128283)
+-- Name: entidade_ent_login_key; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY entidade
+    ADD CONSTRAINT entidade_ent_login_key UNIQUE (ent_login);
+
+
+--
+-- TOC entry 2021 (class 2606 OID 128285)
+-- Name: entidade_entidade_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY entidade_entidade_aud
+    ADD CONSTRAINT entidade_entidade_aud_pkey PRIMARY KEY (ents_codigo, rev);
+
+
+--
+-- TOC entry 2019 (class 2606 OID 128287)
+-- Name: entidade_entidade_pkey; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY entidade_entidade
+    ADD CONSTRAINT entidade_entidade_pkey PRIMARY KEY (ents_codigo, ent_codconstrutora, ent_codvendedor);
+
+
+--
+-- TOC entry 2014 (class 2606 OID 128289)
+-- Name: entidade_pkey; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY entidade
+    ADD CONSTRAINT entidade_pkey PRIMARY KEY (ent_codigo);
+
+
+--
+-- TOC entry 2025 (class 2606 OID 128291)
+-- Name: estado_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY estado_aud
+    ADD CONSTRAINT estado_aud_pkey PRIMARY KEY (est_id, rev);
+
+
+--
+-- TOC entry 2023 (class 2606 OID 128293)
+-- Name: estado_pkey; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY estado
+    ADD CONSTRAINT estado_pkey PRIMARY KEY (est_id);
+
+
+--
+-- TOC entry 2029 (class 2606 OID 128295)
+-- Name: filial_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY filial_aud
+    ADD CONSTRAINT filial_aud_pkey PRIMARY KEY (fil_codigo, rev);
+
+
+--
+-- TOC entry 2027 (class 2606 OID 128297)
+-- Name: filial_pkey; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY filial
+    ADD CONSTRAINT filial_pkey PRIMARY KEY (fil_codigo);
+
+
+--
+-- TOC entry 2033 (class 2606 OID 128299)
+-- Name: mensagem_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY mensagem_aud
+    ADD CONSTRAINT mensagem_aud_pkey PRIMARY KEY (men_codigo, rev);
+
+
+--
+-- TOC entry 2031 (class 2606 OID 128301)
+-- Name: mensagem_pkey; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY mensagem
+    ADD CONSTRAINT mensagem_pkey PRIMARY KEY (men_codigo);
+
+
+--
+-- TOC entry 2037 (class 2606 OID 128303)
+-- Name: pais_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY pais_aud
+    ADD CONSTRAINT pais_aud_pkey PRIMARY KEY (pai_id, rev);
+
+
+--
+-- TOC entry 2035 (class 2606 OID 128305)
+-- Name: pais_pkey; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY pais
+    ADD CONSTRAINT pais_pkey PRIMARY KEY (pai_id);
+
+
+--
+-- TOC entry 2041 (class 2606 OID 128307)
+-- Name: produto_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY produto_aud
+    ADD CONSTRAINT produto_aud_pkey PRIMARY KEY (prd_codigo, rev);
+
+
+--
+-- TOC entry 2039 (class 2606 OID 128309)
+-- Name: produto_pkey; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY produto
+    ADD CONSTRAINT produto_pkey PRIMARY KEY (prd_codigo);
+
+
+--
+-- TOC entry 2043 (class 2606 OID 128311)
+-- Name: revinfo_pkey; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY revinfo
+    ADD CONSTRAINT revinfo_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2047 (class 2606 OID 128313)
+-- Name: sendemail_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY sendemail_aud
+    ADD CONSTRAINT sendemail_aud_pkey PRIMARY KEY (id_sendemail, rev);
+
+
+--
+-- TOC entry 2045 (class 2606 OID 128315)
+-- Name: sendemail_pkey; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY sendemail
+    ADD CONSTRAINT sendemail_pkey PRIMARY KEY (id_sendemail);
+
+
+--
+-- TOC entry 2051 (class 2606 OID 128317)
+-- Name: serie_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY serie_aud
+    ADD CONSTRAINT serie_aud_pkey PRIMARY KEY (ser_codigo, rev);
+
+
+--
+-- TOC entry 2049 (class 2606 OID 128319)
+-- Name: serie_pkey; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY serie
+    ADD CONSTRAINT serie_pkey PRIMARY KEY (ser_codigo);
+
+
+--
+-- TOC entry 2055 (class 2606 OID 128321)
+-- Name: titulo_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY titulo_aud
+    ADD CONSTRAINT titulo_aud_pkey PRIMARY KEY (tit_codigo, rev);
+
+
+--
+-- TOC entry 2053 (class 2606 OID 128323)
+-- Name: titulo_pkey; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY titulo
+    ADD CONSTRAINT titulo_pkey PRIMARY KEY (tit_codigo);
+
+
+--
+-- TOC entry 2059 (class 2606 OID 128325)
+-- Name: valor_comissao_filial_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY valor_comissao_filial_aud
+    ADD CONSTRAINT valor_comissao_filial_aud_pkey PRIMARY KEY (val_codigo, rev);
+
+
+--
+-- TOC entry 2057 (class 2606 OID 128327)
+-- Name: valor_comissao_filial_pkey; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY valor_comissao_filial
+    ADD CONSTRAINT valor_comissao_filial_pkey PRIMARY KEY (val_codigo);
+
+
+--
+-- TOC entry 2062 (class 2606 OID 128329)
+-- Name: version_pk; Type: CONSTRAINT; Schema: public; Owner: admin; Tablespace: 
+--
+
+ALTER TABLE ONLY version
+    ADD CONSTRAINT version_pk PRIMARY KEY (version);
+
+
+--
+-- TOC entry 2060 (class 1259 OID 128330)
+-- Name: version_ir_idx; Type: INDEX; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE INDEX version_ir_idx ON version USING btree (installed_rank);
+
+
+--
+-- TOC entry 2063 (class 1259 OID 128331)
+-- Name: version_s_idx; Type: INDEX; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE INDEX version_s_idx ON version USING btree (success);
+
+
+--
+-- TOC entry 2064 (class 1259 OID 128332)
+-- Name: version_vr_idx; Type: INDEX; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE INDEX version_vr_idx ON version USING btree (version_rank);
+
+
+--
+-- TOC entry 2015 (class 1259 OID 128333)
+-- Name: xlogin; Type: INDEX; Schema: public; Owner: admin; Tablespace: 
+--
+
+CREATE INDEX xlogin ON entidade USING btree (ent_login);
+
+
+--
+-- TOC entry 2073 (class 2606 OID 128334)
+-- Name: bai_codigo_fk; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY entidade
+    ADD CONSTRAINT bai_codigo_fk FOREIGN KEY (bai_codigo) REFERENCES bairro(bai_codigo);
+
+
+--
+-- TOC entry 2084 (class 2606 OID 128339)
+-- Name: bai_codigo_fk; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY filial
+    ADD CONSTRAINT bai_codigo_fk FOREIGN KEY (bai_codigo) REFERENCES bairro(bai_codigo);
+
+
+--
+-- TOC entry 2074 (class 2606 OID 128344)
+-- Name: cid_codigo_fk; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY entidade
+    ADD CONSTRAINT cid_codigo_fk FOREIGN KEY (cid_codigo) REFERENCES cidade(cid_codigo);
+
+
+--
+-- TOC entry 2085 (class 2606 OID 128349)
+-- Name: cid_codigo_fk; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY filial
+    ADD CONSTRAINT cid_codigo_fk FOREIGN KEY (cid_codigo) REFERENCES cidade(cid_codigo);
+
+
+--
+-- TOC entry 2077 (class 2606 OID 128354)
+-- Name: ent_codconstrutora_fk; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY entidade_entidade
+    ADD CONSTRAINT ent_codconstrutora_fk FOREIGN KEY (ent_codconstrutora) REFERENCES entidade(ent_codigo);
+
+
+--
+-- TOC entry 2071 (class 2606 OID 128359)
+-- Name: ent_codigo_fk; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY empreendimento
+    ADD CONSTRAINT ent_codigo_fk FOREIGN KEY (ent_codigo) REFERENCES entidade(ent_codigo);
+
+
+--
+-- TOC entry 2095 (class 2606 OID 128364)
+-- Name: ent_codigo_fk; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY titulo
+    ADD CONSTRAINT ent_codigo_fk FOREIGN KEY (ent_codigo) REFERENCES entidade(ent_codigo);
+
+
+--
+-- TOC entry 2068 (class 2606 OID 128369)
+-- Name: ent_codigo_fk; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY comissao_funcionario_filial
+    ADD CONSTRAINT ent_codigo_fk FOREIGN KEY (ent_codigo) REFERENCES entidade(ent_codigo);
+
+
+--
+-- TOC entry 2096 (class 2606 OID 128374)
+-- Name: ent_codigoabertura_fk; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY titulo
+    ADD CONSTRAINT ent_codigoabertura_fk FOREIGN KEY (ent_codigoabertura) REFERENCES entidade(ent_codigo);
+
+
+--
+-- TOC entry 2097 (class 2606 OID 128379)
+-- Name: ent_codigobaixa_fk; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY titulo
+    ADD CONSTRAINT ent_codigobaixa_fk FOREIGN KEY (ent_codigobaixa) REFERENCES entidade(ent_codigo);
+
+
+--
+-- TOC entry 2078 (class 2606 OID 128384)
+-- Name: ent_codvendedor_fk; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY entidade_entidade
+    ADD CONSTRAINT ent_codvendedor_fk FOREIGN KEY (ent_codvendedor) REFERENCES entidade(ent_codigo);
+
+
+--
+-- TOC entry 2092 (class 2606 OID 128389)
+-- Name: entidade_fk; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY revinfo
+    ADD CONSTRAINT entidade_fk FOREIGN KEY (entidade) REFERENCES entidade(ent_codigo);
+
+
+--
+-- TOC entry 2066 (class 2606 OID 128394)
+-- Name: estado_fk; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY cidade
+    ADD CONSTRAINT estado_fk FOREIGN KEY (estado) REFERENCES estado(est_id);
+
+
+--
+-- TOC entry 2075 (class 2606 OID 128399)
+-- Name: fil_codigo_fk; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY entidade
+    ADD CONSTRAINT fil_codigo_fk FOREIGN KEY (fil_codigo) REFERENCES filial(fil_codigo);
+
+
+--
+-- TOC entry 2069 (class 2606 OID 128404)
+-- Name: fil_codigo_fk; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY comissao_funcionario_filial
+    ADD CONSTRAINT fil_codigo_fk FOREIGN KEY (fil_codigo) REFERENCES filial(fil_codigo);
+
+
+--
+-- TOC entry 2081 (class 2606 OID 128409)
+-- Name: fk119ddb196881b858; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY entidadeacesso_aud
+    ADD CONSTRAINT fk119ddb196881b858 FOREIGN KEY (rev) REFERENCES revinfo(id);
+
+
+--
+-- TOC entry 2072 (class 2606 OID 128414)
+-- Name: fk1d8677d96881b858; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY empreendimento_aud
+    ADD CONSTRAINT fk1d8677d96881b858 FOREIGN KEY (rev) REFERENCES revinfo(id);
+
+
+--
+-- TOC entry 2090 (class 2606 OID 128419)
+-- Name: fk376dab2c6881b858; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY pais_aud
+    ADD CONSTRAINT fk376dab2c6881b858 FOREIGN KEY (rev) REFERENCES revinfo(id);
+
+
+--
+-- TOC entry 2086 (class 2606 OID 128424)
+-- Name: fk566601fc6881b858; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY filial_aud
+    ADD CONSTRAINT fk566601fc6881b858 FOREIGN KEY (rev) REFERENCES revinfo(id);
+
+
+--
+-- TOC entry 2100 (class 2606 OID 128429)
+-- Name: fk5f5e444a6881b858; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY valor_comissao_filial_aud
+    ADD CONSTRAINT fk5f5e444a6881b858 FOREIGN KEY (rev) REFERENCES revinfo(id);
+
+
+--
+-- TOC entry 2098 (class 2606 OID 128434)
+-- Name: fk7f2df50a6881b858; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY titulo_aud
+    ADD CONSTRAINT fk7f2df50a6881b858 FOREIGN KEY (rev) REFERENCES revinfo(id);
+
+
+--
+-- TOC entry 2070 (class 2606 OID 128439)
+-- Name: fk88c99ba96881b858; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY comissao_funcionario_filial_aud
+    ADD CONSTRAINT fk88c99ba96881b858 FOREIGN KEY (rev) REFERENCES revinfo(id);
+
+
+--
+-- TOC entry 2067 (class 2606 OID 128444)
+-- Name: fk980a52f56881b858; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY cidade_aud
+    ADD CONSTRAINT fk980a52f56881b858 FOREIGN KEY (rev) REFERENCES revinfo(id);
+
+
+--
+-- TOC entry 2065 (class 2606 OID 128449)
+-- Name: fka4bdfd366881b858; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY bairro_aud
+    ADD CONSTRAINT fka4bdfd366881b858 FOREIGN KEY (rev) REFERENCES revinfo(id);
+
+
+--
+-- TOC entry 2091 (class 2606 OID 128454)
+-- Name: fkc3d7d84a6881b858; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY produto_aud
+    ADD CONSTRAINT fkc3d7d84a6881b858 FOREIGN KEY (rev) REFERENCES revinfo(id);
+
+
+--
+-- TOC entry 2083 (class 2606 OID 128459)
+-- Name: fkc9e944376881b858; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY estado_aud
+    ADD CONSTRAINT fkc9e944376881b858 FOREIGN KEY (rev) REFERENCES revinfo(id);
+
+
+--
+-- TOC entry 2076 (class 2606 OID 128464)
+-- Name: fkd445e36d6881b858; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY entidade_aud
+    ADD CONSTRAINT fkd445e36d6881b858 FOREIGN KEY (rev) REFERENCES revinfo(id);
+
+
+--
+-- TOC entry 2094 (class 2606 OID 128469)
+-- Name: fkde03414d6881b858; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY serie_aud
+    ADD CONSTRAINT fkde03414d6881b858 FOREIGN KEY (rev) REFERENCES revinfo(id);
+
+
+--
+-- TOC entry 2080 (class 2606 OID 128474)
+-- Name: fkdfab91482877d7f6; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY entidadeacesso
+    ADD CONSTRAINT fkdfab91482877d7f6 FOREIGN KEY (ent_codigo) REFERENCES entidade(ent_codigo);
+
+
+--
+-- TOC entry 2089 (class 2606 OID 128479)
+-- Name: fkeea3e67c6881b858; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY mensagem_aud
+    ADD CONSTRAINT fkeea3e67c6881b858 FOREIGN KEY (rev) REFERENCES revinfo(id);
+
+
+--
+-- TOC entry 2082 (class 2606 OID 128484)
+-- Name: pais_fk; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY estado
+    ADD CONSTRAINT pais_fk FOREIGN KEY (pais) REFERENCES pais(pai_id);
+
+
+--
+-- TOC entry 2079 (class 2606 OID 128489)
+-- Name: rev_fk; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY entidade_entidade_aud
+    ADD CONSTRAINT rev_fk FOREIGN KEY (rev) REFERENCES revinfo(id);
+
+
+--
+-- TOC entry 2093 (class 2606 OID 128494)
+-- Name: rev_fk; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY sendemail_aud
+    ADD CONSTRAINT rev_fk FOREIGN KEY (rev) REFERENCES revinfo(id);
+
+
+--
+-- TOC entry 2087 (class 2606 OID 128499)
+-- Name: usr_destino_fk; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY mensagem
+    ADD CONSTRAINT usr_destino_fk FOREIGN KEY (usr_destino) REFERENCES entidade(ent_codigo);
+
+
+--
+-- TOC entry 2088 (class 2606 OID 128504)
+-- Name: usr_origem_fk; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY mensagem
+    ADD CONSTRAINT usr_origem_fk FOREIGN KEY (usr_origem) REFERENCES entidade(ent_codigo);
+
+
+--
+-- TOC entry 2099 (class 2606 OID 128509)
+-- Name: val_comissao_fk; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY valor_comissao_filial
+    ADD CONSTRAINT val_comissao_fk FOREIGN KEY (val_comissao) REFERENCES comissao_funcionario_filial(com_codigo);
+
+
+--
+-- TOC entry 2264 (class 0 OID 0)
+-- Dependencies: 6
+-- Name: public; Type: ACL; Schema: -; Owner: postgres
+--
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM postgres;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+--
+-- PostgreSQL database dump complete
+--
+
