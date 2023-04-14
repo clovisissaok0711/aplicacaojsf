@@ -1,8 +1,8 @@
 # aplicacaojsf
 
-================================== ERP DESENVOLVIDO COM JSF + HIBERNATE + PRIMEFACES + SPRING SECURITY =================================================
+ERP DESENVOLVIDO COM JSF + HIBERNATE + PRIMEFACES + SPRING SECURITY
 
-FERRAMENTAS UTILIZADAS:
+FERRAMENTAS UTILIZADAS:\n
 POSTGRESQL 	   -> 11.19.2
 JAVA	       -> 8
 APACHE TOMCAT  -> 9
